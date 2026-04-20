@@ -1,0 +1,46 @@
+---
+import type { GetStaticPaths } from "astro";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import SectionHeader from "~/components/ui/SectionHeader.astro";
+import TalkCard from "~/components/ui/TalkCard.astro";
+import { SITE } from "~/config/site";
+import type { Locale } from "~/config/site";
+import { t } from "~/i18n/ui";
+import { getTalks } from "~/lib/content";
+import { localeTalks } from "~/lib/paths";
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  return SITE.locales.map((lang) => ({ params: { lang } }));
+};
+
+const { lang } = Astro.params;
+const locale = lang as Locale;
+const otherLocale: Locale = locale === "en" ? "ja" : "en";
+const strings = t(locale);
+
+const talks = await getTalks(locale);
+const otherHref = localeTalks(otherLocale);
+---
+<BaseLayout
+  locale={locale}
+  title={strings.listings.talksTitle}
+  description={strings.listings.talksDescription}
+  alternateUrl={otherHref}
+  xDefaultUrl={localeTalks("en")}
+>
+  <SectionHeader
+    title={strings.listings.talksTitle}
+    description={strings.listings.talksDescription}
+    level={1}
+  />
+  <div class="talks-listing">
+    {talks.map((entry) => <TalkCard entry={entry} locale={locale} />)}
+  </div>
+</BaseLayout>
+
+<style>
+  .talks-listing {
+    display: flex;
+    flex-direction: column;
+  }
+</style>

@@ -1,0 +1,25 @@
+---
+title: "Field notes on SRE"
+description: "A few unpolished notes from running production systems — the kind of stuff I wish I had read when I started."
+pubDate: 2026-03-28
+updatedDate: 2026-04-02
+lang: en
+---
+
+Some loose notes from a decade of being paged at 3am, in no particular order.
+
+## 1. SLOs before dashboards
+
+Dashboards without SLOs are aquariums. Pretty to watch, unclear what to do.
+Pick a handful of user-facing indicators, set budgets, and let the budget
+decide whether to ship or shore up.
+
+## 2. Runbooks decay faster than code
+
+Assume every runbook is wrong. Annotate them with a last-verified date. If
+nobody has touched a runbook in six months, it is probably lying.
+
+## 3. Toil is a liquid
+
+It fills the container you give it. Cap the container — if 30% of your week
+goes to toil, own that number and defend it publicly.

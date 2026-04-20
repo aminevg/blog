@@ -1,0 +1,72 @@
+---
+import type { GetStaticPaths } from "astro";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import Hero from "~/components/layout/Hero.astro";
+import SectionHeader from "~/components/ui/SectionHeader.astro";
+import PostCard from "~/components/ui/PostCard.astro";
+import TalkCard from "~/components/ui/TalkCard.astro";
+import { SITE } from "~/config/site";
+import type { Locale } from "~/config/site";
+import { t } from "~/i18n/ui";
+import { getPosts, getTalks } from "~/lib/content";
+import { localeBlog, localeTalks, localeHome } from "~/lib/paths";
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  return SITE.locales.map((lang) => ({ params: { lang } }));
+};
+
+const { lang } = Astro.params;
+const locale = lang as Locale;
+const strings = t(locale);
+
+const posts = (await getPosts(locale)).slice(0, SITE.home.postsCount);
+const talks = (await getTalks(locale)).slice(0, SITE.home.talksCount);
+
+const otherLocaleHref = localeHome(locale === "en" ? "ja" : "en");
+---
+<BaseLayout
+  locale={locale}
+  title={SITE.title}
+  description={SITE.description[locale]}
+  alternateUrl={otherLocaleHref}
+  xDefaultUrl={localeHome("en")}
+  ogImage={`/open-graph/${locale}/home.png`}
+>
+  <Hero locale={locale} />
+
+  {posts.length > 0 && (
+    <section class="home-section">
+      <SectionHeader
+        title={strings.home.latestPosts}
+        viewAllHref={localeBlog(locale)}
+        viewAllLabel={strings.home.viewAllPosts}
+      />
+      <div class="home-section__list">
+        {posts.map((entry) => <PostCard entry={entry} locale={locale} />)}
+      </div>
+    </section>
+  )}
+
+  {talks.length > 0 && (
+    <section class="home-section">
+      <SectionHeader
+        title={strings.home.latestTalks}
+        viewAllHref={localeTalks(locale)}
+        viewAllLabel={strings.home.viewAllTalks}
+      />
+      <div class="home-section__list">
+        {talks.map((entry) => <TalkCard entry={entry} locale={locale} />)}
+      </div>
+    </section>
+  )}
+</BaseLayout>
+
+<style>
+  .home-section {
+    margin-bottom: 4rem;
+  }
+  .home-section__list {
+    display: flex;
+    flex-direction: column;
+  }
+</style>

@@ -1,0 +1,53 @@
+---
+export interface Props {
+  variant?: "note" | "info" | "warning" | "tip";
+  title?: string;
+}
+
+const { variant = "note", title } = Astro.props;
+
+const defaultTitles: Record<NonNullable<Props["variant"]>, string> = {
+  note: "Note",
+  info: "Info",
+  warning: "Heads up",
+  tip: "Tip",
+};
+
+const resolvedTitle = title ?? defaultTitles[variant];
+---
+<aside class:list={["callout", `callout--${variant}`]} role="note">
+  <p class="callout__title">{resolvedTitle}</p>
+  <div class="callout__body">
+    <slot />
+  </div>
+</aside>
+
+<style>
+  .callout {
+    --callout-tint: var(--color-fg-muted);
+    margin: 1.75rem 0;
+    padding: 1rem 1.25rem;
+    border-left: 3px solid var(--callout-tint);
+    background: color-mix(in oklab, var(--callout-tint) 6%, var(--color-surface));
+    border-radius: 0 0.375rem 0.375rem 0;
+    font-family: var(--font-body);
+  }
+
+  .callout--note { --callout-tint: var(--color-fg-muted); }
+  .callout--info { --callout-tint: oklch(55% 0.12 230); }
+  .callout--tip  { --callout-tint: oklch(55% 0.12 150); }
+  .callout--warning { --callout-tint: oklch(60% 0.14 60); }
+
+  .callout__title {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--callout-tint);
+    margin: 0 0 0.375rem;
+  }
+
+  .callout__body :global(> :first-child) { margin-top: 0; }
+  .callout__body :global(> :last-child) { margin-bottom: 0; }
+</style>

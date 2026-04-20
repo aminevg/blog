@@ -1,0 +1,25 @@
+---
+import type { Locale } from "~/config/site";
+
+export interface Props {
+  date: Date;
+  locale: Locale;
+  style?: "full" | "short";
+}
+
+const { date, locale, style = "full" } = Astro.props;
+
+const iso = date.toISOString();
+const formatter =
+  style === "short"
+    ? new Intl.DateTimeFormat(locale === "ja" ? "ja-JP" : "en-US", {
+        year: "numeric",
+        month: "short",
+      })
+    : new Intl.DateTimeFormat(locale === "ja" ? "ja-JP" : "en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+---
+<time datetime={iso}>{formatter.format(date)}</time>

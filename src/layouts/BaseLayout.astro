@@ -1,0 +1,84 @@
+---
+import "~/styles/global.css";
+import type { Locale } from "~/config/site";
+import Head from "~/components/layout/Head.astro";
+import Header from "~/components/layout/Header.astro";
+import Footer from "~/components/layout/Footer.astro";
+
+export interface Props {
+  locale: Locale;
+  title: string;
+  description: string;
+  canonical?: string | URL;
+  ogImage?: string | URL;
+  alternateUrl?: string | null;
+  xDefaultUrl?: string;
+  article?: {
+    publishedTime?: Date;
+    modifiedTime?: Date;
+  };
+  // Wide variant skips the content max-width constraint.
+  wide?: boolean;
+}
+
+const {
+  locale,
+  title,
+  description,
+  canonical,
+  ogImage,
+  alternateUrl = null,
+  xDefaultUrl,
+  article,
+  wide = false,
+} = Astro.props;
+---
+<!doctype html>
+<html lang={locale}>
+  <Head
+    locale={locale}
+    title={title}
+    description={description}
+    canonical={canonical}
+    ogImage={ogImage}
+    alternateUrl={alternateUrl}
+    xDefaultUrl={xDefaultUrl}
+    article={article}
+  />
+  <body>
+    <a href="#main" class="skip-link">Skip to content</a>
+    <Header locale={locale} otherLocaleHref={alternateUrl} />
+    <main id="main" class:list={["site-main", wide && "site-main--wide"]}>
+      <slot />
+    </main>
+    <Footer locale={locale} />
+
+    <style>
+      .skip-link {
+        position: absolute;
+        left: -9999px;
+        top: 0;
+        background: var(--color-accent);
+        color: var(--color-bg);
+        padding: 0.5rem 1rem;
+        font-family: var(--font-sans);
+        z-index: 100;
+      }
+
+      .skip-link:focus-visible {
+        left: 1rem;
+        top: 1rem;
+      }
+
+      .site-main {
+        max-width: 42rem;
+        margin: 0 auto;
+        padding: clamp(2rem, 5vw, 3.5rem) clamp(1rem, 4vw, 2rem);
+      }
+
+      .site-main--wide {
+        max-width: 72rem;
+      }
+    </style>
+  </body>
+</html>

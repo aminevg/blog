@@ -1,0 +1,100 @@
+---
+import "~/styles/global.css";
+import Head from "~/components/layout/Head.astro";
+import { SITE } from "~/config/site";
+import { t } from "~/i18n/ui";
+
+const en = t("en").notFound;
+const ja = t("ja").notFound;
+---
+<!doctype html>
+<html lang="en">
+  <Head
+    locale="en"
+    title="404"
+    description="Page not found"
+    alternateUrl={null}
+  />
+  <body class="not-found">
+    <main class="not-found__main">
+      <div class="not-found__block">
+        <p class="not-found__code">404</p>
+        <h1 lang="en">{en.title}</h1>
+        <p lang="en" class="not-found__body">{en.body}</p>
+        <a href="/en/" lang="en" class="not-found__cta">{en.home} →</a>
+      </div>
+
+      <hr class="not-found__divider" />
+
+      <div class="not-found__block">
+        <h1 lang="ja">{ja.title}</h1>
+        <p lang="ja" class="not-found__body">{ja.body}</p>
+        <a href="/ja/" lang="ja" class="not-found__cta">{ja.home} →</a>
+      </div>
+
+      <footer class="not-found__footer">
+        <a href={SITE.author.url} rel="home">{SITE.author.name}</a>
+      </footer>
+    </main>
+
+    <style>
+      .not-found {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: var(--color-bg);
+        color: var(--color-fg);
+      }
+      .not-found__main {
+        max-width: 32rem;
+        padding: 3rem 1.5rem;
+        text-align: center;
+      }
+      .not-found__code {
+        font-family: var(--font-mono);
+        font-size: 0.875rem;
+        letter-spacing: 0.2em;
+        color: var(--color-fg-subtle);
+        margin: 0 0 1rem;
+      }
+      h1 {
+        font-family: var(--font-display);
+        font-weight: 500;
+        font-size: clamp(1.5rem, 4vw, 2.25rem);
+        letter-spacing: -0.015em;
+        margin: 0 0 0.5rem;
+      }
+      .not-found__body {
+        font-family: var(--font-body);
+        color: var(--color-fg-muted);
+        margin: 0 0 1.25rem;
+        line-height: 1.55;
+      }
+      .not-found__cta {
+        font-family: var(--font-sans);
+        font-size: 0.9rem;
+        color: var(--color-accent);
+        text-decoration: none;
+      }
+      .not-found__cta:hover {
+        text-decoration: underline;
+      }
+      .not-found__divider {
+        border: none;
+        border-top: 1px solid var(--color-border);
+        margin: 2.5rem auto;
+        width: 4rem;
+      }
+      .not-found__footer {
+        margin-top: 3rem;
+        font-family: var(--font-sans);
+        font-size: 0.75rem;
+        color: var(--color-fg-subtle);
+      }
+      .not-found__footer a {
+        color: inherit;
+        text-decoration: none;
+      }
+    </style>
+  </body>
+</html>
