@@ -1,0 +1,46 @@
+{
+  "plugins": {
+    "mdx": true
+  },
+  "rules": {
+    "preset-ja-technical-writing": {
+      "no-exclamation-question-mark": false,
+      "ja-no-weak-phrase": false
+    },
+    "preset-smarthr": {
+      "prh-rules": false,
+      "@textlint-rule/pattern": false
+    },
+    "write-good": true,
+    "alex": {
+      "allow": ["japanese", "trap", "lies"]
+    },
+    "unexpanded-acronym": {
+      "ignore_acronyms": [
+        "SRE",
+        "API",
+        "CLI",
+        "CI",
+        "CD",
+        "HTTP",
+        "URL",
+        "DNS",
+        "AWS",
+        "GCP",
+        "HTML",
+        "CSS",
+        "JS",
+        "TS",
+        "JSON",
+        "YAML",
+        "MDX",
+        "RSS",
+        "OG",
+        "UI",
+        "UX",
+        "PR",
+        "FAQ"
+      ]
+    }
+  }
+}

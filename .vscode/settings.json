@@ -1,0 +1,10 @@
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "eslint.validate": ["astro", "javascript", "typescript"],
+  "[astro]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "textlint.languages": ["markdown", "mdx"]
+}
