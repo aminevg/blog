@@ -11,11 +11,15 @@
     "check": "astro check",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "format:file": "prettier --write",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "lint:file": "eslint --fix",
     "textlint": "textlint \"src/content/**/*.{md,mdx}\"",
     "textlint:fix": "textlint --fix \"src/content/**/*.{md,mdx}\"",
+    "textlint:file": "textlint --fix",
     "spell": "cspell \"**/*.{astro,ts,mjs,md,mdx,json,css}\"",
+    "spell:file": "cspell",
     "verify": "npm run format:check && npm run lint && npm run textlint && npm run spell && npm run check"
   },
   "dependencies": {
