@@ -17,20 +17,26 @@ const href = talkUrl(locale, slug);
 const { title, event, eventDate, venue, thumbnail } = entry.data;
 const transitionName = `thumb-talk-${slug}`;
 ---
+
 <article class="talk-card">
   <a href={href} class="talk-card__link">
-    {thumbnail && (
-      <div class="talk-card__media" style={`view-transition-name: ${transitionName}`}>
-        <Image
-          src={thumbnail}
-          alt=""
-          widths={[320, 640, 960]}
-          sizes="(min-width: 48rem) 280px, 100vw"
-          loading="lazy"
-          decoding="async"
-        />
-      </div>
-    )}
+    {
+      thumbnail && (
+        <div
+          class="talk-card__media"
+          style={`view-transition-name: ${transitionName}`}
+        >
+          <Image
+            src={thumbnail}
+            alt=""
+            widths={[320, 640, 960]}
+            sizes="(min-width: 48rem) 280px, 100vw"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      )
+    }
     <div class="talk-card__body">
       <h3 class="talk-card__title">{title}</h3>
       <p class="talk-card__meta">

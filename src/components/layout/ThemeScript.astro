@@ -2,18 +2,19 @@
 // Inlined blocking script — MUST run before first paint to prevent FOUC.
 // Keep it tiny and dependency-free.
 ---
+
 <script is:inline>
   (function () {
     try {
-      var stored = localStorage.getItem("theme");
-      var resolved =
+      const stored = localStorage.getItem("theme");
+      const resolved =
         stored === "light" || stored === "dark"
           ? stored
           : window.matchMedia("(prefers-color-scheme: dark)").matches
-          ? "dark"
-          : "light";
+            ? "dark"
+            : "light";
       document.documentElement.dataset.theme = resolved;
-    } catch (_) {
+    } catch {
       document.documentElement.dataset.theme = "light";
     }
   })();

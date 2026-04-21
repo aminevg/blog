@@ -13,27 +13,33 @@ const { locale, otherHref } = Astro.props;
 const target = otherLocale(locale);
 const strings = t(locale);
 
-const targetLabel = target === "en" ? strings.languageSwitcher.toEnglish : strings.languageSwitcher.toJapanese;
+const targetLabel =
+  target === "en"
+    ? strings.languageSwitcher.toEnglish
+    : strings.languageSwitcher.toJapanese;
 const missingLabel =
   target === "en"
     ? strings.languageSwitcher.onlyAvailableInJapanese
     : strings.languageSwitcher.onlyAvailableInEnglish;
 ---
-{otherHref ? (
-  <a
-    href={otherHref}
-    class="lang-switch"
-    hreflang={target}
-    lang={target}
-    rel="alternate"
-  >
-    {targetLabel}
-  </a>
-) : (
-  <span class="lang-switch lang-switch--disabled" aria-disabled="true">
-    {missingLabel}
-  </span>
-)}
+
+{
+  otherHref ? (
+    <a
+      href={otherHref}
+      class="lang-switch"
+      hreflang={target}
+      lang={target}
+      rel="alternate"
+    >
+      {targetLabel}
+    </a>
+  ) : (
+    <span class="lang-switch lang-switch--disabled" aria-disabled="true">
+      {missingLabel}
+    </span>
+  )
+}
 
 <style>
   .lang-switch {
@@ -47,7 +53,9 @@ const missingLabel =
     border: 1px solid var(--color-border);
     background: var(--color-surface-raised);
     color: var(--color-fg-muted);
-    transition: color 120ms ease, border-color 120ms ease;
+    transition:
+      color 120ms ease,
+      border-color 120ms ease;
     display: inline-flex;
     align-items: center;
     height: 2.25rem;

@@ -6,11 +6,16 @@ import { glob } from "astro/loaders";
 
 // Project-root relative base for talk MDX files.
 const TALKS_BASE = "./src/content/talks";
-const FALLBACK_PATH = path.join(process.cwd(), "src/content/talks/_fallback.jpg");
+const FALLBACK_PATH = path.join(
+  process.cwd(),
+  "src/content/talks/_fallback.jpg",
+);
 const THUMB_EXT_CANDIDATES = ["jpg", "jpeg", "png", "webp"] as const;
 
 // Our glob IDs look like "en/my-talk/index" or "en/my-talk" — normalize.
-function parseLocaleAndSlug(id: string): { locale: string; slug: string } | null {
+function parseLocaleAndSlug(
+  id: string,
+): { locale: string; slug: string } | null {
   const parts = id.split("/");
   if (parts.length < 2) return null;
   const [locale, slug] = parts;
@@ -22,7 +27,10 @@ function thumbDir(locale: string, slug: string): string {
   return path.join(process.cwd(), TALKS_BASE, locale, slug);
 }
 
-async function findExistingThumbnail(locale: string, slug: string): Promise<string | null> {
+async function findExistingThumbnail(
+  locale: string,
+  slug: string,
+): Promise<string | null> {
   const dir = thumbDir(locale, slug);
   for (const ext of THUMB_EXT_CANDIDATES) {
     const candidate = path.join(dir, `thumbnail.${ext}`);
@@ -31,18 +39,28 @@ async function findExistingThumbnail(locale: string, slug: string): Promise<stri
   return null;
 }
 
-function extFromContentType(contentType: string | null, fallbackUrl: string): string {
+function extFromContentType(
+  contentType: string | null,
+  fallbackUrl: string,
+): string {
   const ct = contentType?.toLowerCase() ?? "";
   if (ct.includes("png")) return "png";
   if (ct.includes("webp")) return "webp";
   if (ct.includes("jpeg") || ct.includes("jpg")) return "jpg";
   // Guess from URL extension.
-  const urlExt = path.extname(new URL(fallbackUrl).pathname).slice(1).toLowerCase();
-  if ((THUMB_EXT_CANDIDATES as readonly string[]).includes(urlExt)) return urlExt;
+  const urlExt = path
+    .extname(new URL(fallbackUrl).pathname)
+    .slice(1)
+    .toLowerCase();
+  if ((THUMB_EXT_CANDIDATES as readonly string[]).includes(urlExt))
+    return urlExt;
   return "jpg";
 }
 
-async function extractOgImage(html: string, pageUrl: string): Promise<string | null> {
+async function extractOgImage(
+  html: string,
+  pageUrl: string,
+): Promise<string | null> {
   const match = html.match(
     /<meta\s+(?:property|name)=["']og:image(?::secure_url)?["']\s+content=["']([^"']+)["']/i,
   );
@@ -82,7 +100,9 @@ async function fetchThumbnailBytes(
     }
     const imgRes = await fetch(imageUrl);
     if (!imgRes.ok) {
-      logger.warn(`talks-loader: og:image ${imageUrl} returned ${imgRes.status}`);
+      logger.warn(
+        `talks-loader: og:image ${imageUrl} returned ${imgRes.status}`,
+      );
       return null;
     }
     const ab = await imgRes.arrayBuffer();
@@ -91,7 +111,9 @@ async function fetchThumbnailBytes(
       ext: extFromContentType(imgRes.headers.get("content-type"), imageUrl),
     };
   } catch (err) {
-    logger.warn(`talks-loader: fetch error for ${slidesUrl}: ${(err as Error).message}`);
+    logger.warn(
+      `talks-loader: fetch error for ${slidesUrl}: ${(err as Error).message}`,
+    );
     return null;
   }
 }
@@ -158,7 +180,10 @@ export function talksLoader(): Loader {
       }
 
       // Cache fetched thumbnail bytes keyed by slug (dedup across locales).
-      const fetchCache = new Map<string, { bytes: Uint8Array; ext: string } | "fallback">();
+      const fetchCache = new Map<
+        string,
+        { bytes: Uint8Array; ext: string } | "fallback"
+      >();
 
       for (const [id, entry] of entries) {
         const parsed = parseLocaleAndSlug(id);
@@ -188,9 +213,16 @@ export function talksLoader(): Loader {
 
           if (cached === "fallback") {
             existing = await copyFallback(locale, slug);
-            logger.info(`talks-loader: used fallback for ${locale}/${slug} — review if desired`);
+            logger.info(
+              `talks-loader: used fallback for ${locale}/${slug} — review if desired`,
+            );
           } else {
-            existing = await writeThumbnail(locale, slug, cached.bytes, cached.ext);
+            existing = await writeThumbnail(
+              locale,
+              slug,
+              cached.bytes,
+              cached.ext,
+            );
             logger.info(
               `talks-loader: fetched thumbnail for ${locale}/${slug} — commit before pushing`,
             );
@@ -200,7 +232,8 @@ export function talksLoader(): Loader {
         // Step 3 — resolve the thumbnail path relative to the entry's MDX file
         // so the image() schema helper turns it into ImageMetadata.
         const thumbnailRelative = `./${path.basename(existing)}`;
-        const mdxFilePath = entry.filePath ?? path.join(TALKS_BASE, locale, slug, "index.mdx");
+        const mdxFilePath =
+          entry.filePath ?? path.join(TALKS_BASE, locale, slug, "index.mdx");
 
         const enrichedData = await parseData({
           id,

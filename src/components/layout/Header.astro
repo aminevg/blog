@@ -4,12 +4,7 @@ import { SITE } from "~/config/site";
 import { t } from "~/i18n/ui";
 import ThemeToggle from "~/components/ui/ThemeToggle.astro";
 import LanguageSwitcher from "~/components/ui/LanguageSwitcher.astro";
-import {
-  localeHome,
-  localeBlog,
-  localeTalks,
-  localeAbout,
-} from "~/lib/paths";
+import { localeHome, localeBlog, localeTalks, localeAbout } from "~/lib/paths";
 
 export interface Props {
   locale: Locale;
@@ -28,6 +23,7 @@ const navItems = [
 
 const currentPath = Astro.url.pathname;
 ---
+
 <header class="site-header" aria-label="Site header">
   <div class="site-header__inner">
     <a href={localeHome(locale)} class="site-header__brand" rel="home">
@@ -36,16 +32,20 @@ const currentPath = Astro.url.pathname;
 
     <nav class="site-header__nav" aria-label="Primary">
       <ul>
-        {navItems.map((item) => (
-          <li>
-            <a
-              href={item.href}
-              aria-current={currentPath.startsWith(item.href) ? "page" : undefined}
-            >
-              {item.label}
-            </a>
-          </li>
-        ))}
+        {
+          navItems.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                aria-current={
+                  currentPath.startsWith(item.href) ? "page" : undefined
+                }
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
       </ul>
     </nav>
 

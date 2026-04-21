@@ -17,20 +17,26 @@ const href = postUrl(locale, slug);
 const { title, description, pubDate, heroImage } = entry.data;
 const transitionName = `thumb-post-${slug}`;
 ---
+
 <article class="post-card">
   <a href={href} class="post-card__link">
-    {heroImage && (
-      <div class="post-card__media" style={`view-transition-name: ${transitionName}`}>
-        <Image
-          src={heroImage}
-          alt=""
-          widths={[320, 640]}
-          sizes="(min-width: 48rem) 180px, 40vw"
-          loading="lazy"
-          decoding="async"
-        />
-      </div>
-    )}
+    {
+      heroImage && (
+        <div
+          class="post-card__media"
+          style={`view-transition-name: ${transitionName}`}
+        >
+          <Image
+            src={heroImage}
+            alt=""
+            widths={[320, 640]}
+            sizes="(min-width: 48rem) 180px, 40vw"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      )
+    }
     <div class="post-card__body">
       <h3 class="post-card__title">{title}</h3>
       <p class="post-card__description">{description}</p>

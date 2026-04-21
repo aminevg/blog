@@ -35,6 +35,7 @@ const variants = [
   },
 ];
 ---
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -59,7 +60,9 @@ const variants = [
         --border: #d9ccb7;
         --accent: #7b2d26;
       }
-      * { box-sizing: border-box; }
+      * {
+        box-sizing: border-box;
+      }
       body {
         margin: 0;
         background: var(--bg);
@@ -129,7 +132,9 @@ const variants = [
         margin: 0 0 0.45rem;
         transition: color 160ms ease;
       }
-      .variant__link:hover .variant__name { color: var(--accent); }
+      .variant__link:hover .variant__name {
+        color: var(--accent);
+      }
       .variant__description {
         font-size: 1rem;
         color: var(--fg-muted);
@@ -157,7 +162,9 @@ const variants = [
         color: var(--fg-muted);
         font-size: 1.1rem;
         align-self: center;
-        transition: transform 160ms ease, color 160ms ease;
+        transition:
+          transform 160ms ease,
+          color 160ms ease;
       }
       .variant__link:hover .variant__arrow {
         transform: translateX(4px);
@@ -171,7 +178,9 @@ const variants = [
         max-width: 52ch;
         line-height: 1.65;
       }
-      .footnote a { color: var(--accent); }
+      .footnote a {
+        color: var(--accent);
+      }
     </style>
   </head>
   <body>
@@ -185,29 +194,36 @@ const variants = [
       </p>
 
       <ol class="variants">
-        {variants.map((v) => (
-          <li class="variant">
-            <a href={`/design-explorations/${v.slug}/`} class="variant__link">
-              <span class="variant__number">{v.number}</span>
-              <div>
-                <h2 class="variant__name">{v.name}</h2>
-                <p class="variant__description">{v.description}</p>
-                <ul class="variant__keywords">
-                  {v.keywords.map((kw) => <li>{kw}</li>)}
-                </ul>
-              </div>
-              <span class="variant__arrow" aria-hidden="true">→</span>
-            </a>
-          </li>
-        ))}
+        {
+          variants.map((v) => (
+            <li class="variant">
+              <a href={`/design-explorations/${v.slug}/`} class="variant__link">
+                <span class="variant__number">{v.number}</span>
+                <div>
+                  <h2 class="variant__name">{v.name}</h2>
+                  <p class="variant__description">{v.description}</p>
+                  <ul class="variant__keywords">
+                    {v.keywords.map((kw) => (
+                      <li>{kw}</li>
+                    ))}
+                  </ul>
+                </div>
+                <span class="variant__arrow" aria-hidden="true">
+                  →
+                </span>
+              </a>
+            </li>
+          ))
+        }
       </ol>
 
       <p class="footnote">
         All variants share the same infrastructure: Astro 6 static output,
         Tailwind 4 tokens, MDX content collections, auto-fetched talk
         thumbnails, native view transitions, and per-locale RSS and llms.txt.
-        Only the visual layer differs. See <a href="/en/">the live
-        (Editorial) site</a>.
+        Only the visual layer differs. See <a href="/en/"
+          >the live (Editorial) site</a
+        >.
       </p>
     </main>
   </body>

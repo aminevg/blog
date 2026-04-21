@@ -24,6 +24,7 @@ const talks = (await getTalks(locale)).slice(0, SITE.home.talksCount);
 
 const otherLocaleHref = localeHome(locale === "en" ? "ja" : "en");
 ---
+
 <BaseLayout
   locale={locale}
   title={SITE.title}
@@ -34,31 +35,39 @@ const otherLocaleHref = localeHome(locale === "en" ? "ja" : "en");
 >
   <Hero locale={locale} />
 
-  {posts.length > 0 && (
-    <section class="home-section">
-      <SectionHeader
-        title={strings.home.latestPosts}
-        viewAllHref={localeBlog(locale)}
-        viewAllLabel={strings.home.viewAllPosts}
-      />
-      <div class="home-section__list">
-        {posts.map((entry) => <PostCard entry={entry} locale={locale} />)}
-      </div>
-    </section>
-  )}
+  {
+    posts.length > 0 && (
+      <section class="home-section">
+        <SectionHeader
+          title={strings.home.latestPosts}
+          viewAllHref={localeBlog(locale)}
+          viewAllLabel={strings.home.viewAllPosts}
+        />
+        <div class="home-section__list">
+          {posts.map((entry) => (
+            <PostCard entry={entry} locale={locale} />
+          ))}
+        </div>
+      </section>
+    )
+  }
 
-  {talks.length > 0 && (
-    <section class="home-section">
-      <SectionHeader
-        title={strings.home.latestTalks}
-        viewAllHref={localeTalks(locale)}
-        viewAllLabel={strings.home.viewAllTalks}
-      />
-      <div class="home-section__list">
-        {talks.map((entry) => <TalkCard entry={entry} locale={locale} />)}
-      </div>
-    </section>
-  )}
+  {
+    talks.length > 0 && (
+      <section class="home-section">
+        <SectionHeader
+          title={strings.home.latestTalks}
+          viewAllHref={localeTalks(locale)}
+          viewAllLabel={strings.home.viewAllTalks}
+        />
+        <div class="home-section__list">
+          {talks.map((entry) => (
+            <TalkCard entry={entry} locale={locale} />
+          ))}
+        </div>
+      </section>
+    )
+  }
 </BaseLayout>
 
 <style>

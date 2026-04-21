@@ -7,17 +7,26 @@ export interface Props {
   level?: 1 | 2;
 }
 
-const { title, viewAllHref, viewAllLabel, description, level = 2 } = Astro.props;
+const {
+  title,
+  viewAllHref,
+  viewAllLabel,
+  description,
+  level = 2,
+} = Astro.props;
 const Tag = `h${level}` as const;
 ---
+
 <header class="section-header">
   <div class="section-header__row">
     <Tag class="section-header__title">{title}</Tag>
-    {viewAllHref && viewAllLabel && (
-      <a href={viewAllHref} class="section-header__link">
-        {viewAllLabel} <span aria-hidden="true">→</span>
-      </a>
-    )}
+    {
+      viewAllHref && viewAllLabel && (
+        <a href={viewAllHref} class="section-header__link">
+          {viewAllLabel} <span aria-hidden="true">→</span>
+        </a>
+      )
+    }
   </div>
   {description && <p class="section-header__description">{description}</p>}
 </header>

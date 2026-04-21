@@ -140,6 +140,7 @@ No `heroImage` field. Authors override the derived thumbnail by committing a fil
 - MDX VS Code extension + Astro VS Code extension for full language-server support.
 
 Initial MDX component library (build as needed, one file per component):
+
 - `Callout` (info / warning / note / tip variants)
 - `Figure` (captioned image)
 - `Video` (YouTube / Vimeo embed wrapper)
@@ -207,6 +208,7 @@ i18n: {
 ### 7.2 Verified stacks
 
 **Bilingual fallback body font-family:**
+
 ```
 system-ui, -apple-system, "Segoe UI", Roboto,
 "Hiragino Sans", "Yu Gothic UI", Meiryo, "Noto Sans JP",
@@ -214,6 +216,7 @@ sans-serif
 ```
 
 **Monospace stack:**
+
 ```
 ui-monospace, "SF Mono", "Cascadia Code",
 "JetBrains Mono", Consolas, Menlo, monospace
@@ -241,7 +244,7 @@ ui-monospace, "SF Mono", "Cascadia Code",
 - **Named thumbnail morph:** `view-transition-name: thumb-<slug>` applied to:
   - The thumbnail element on card components (home latest-posts / latest-talks, and the blog/talks listings).
   - The hero image on the post/talk detail page.
-  The browser morphs position and size across navigation.
+    The browser morphs position and size across navigation.
 - **Header stability:** `view-transition-name: site-header` on the nav element. Since the header is identical across pages, the default morph is imperceptible — effectively persists without requiring Astro's `transition:persist`.
 - **Firefox fallback:** plain navigation, no animation. Acceptable graceful degradation.
 
@@ -265,11 +268,13 @@ Browser support: Chrome/Edge 126+, Safari 18.2+, iOS Safari 18.2+, Opera 112+ (~
 ### 9.3 Detail pages
 
 **Post detail** (`/[lang]/blog/[slug]/`):
+
 - `heroImage` (if set), title, `pubDate`, `updatedDate` (if set), rendered MDX body.
 - Language switcher reflects whether the sibling translation exists.
 - `view-transition-name` on the hero image for the morph from the listing card.
 
 **Talk detail** (`/[lang]/talks/[slug]/`):
+
 - `thumbnail` (always present, via loader), title, `event`, `eventDate`, `venue`, abstract, rendered MDX body.
 - Two primary buttons: **"View slides →"** (outbound to `slidesUrl`) and **"Watch recording →"** (outbound to `videoUrl`, if set).
 - Markdown body is optional — minimal talk entries just have the metadata-driven header.
@@ -314,6 +319,7 @@ The `talks` collection uses a custom Astro content loader that wraps the built-i
 ### 11.1 Shared `<Head>` component
 
 Every page renders through it. Emits:
+
 - `<title>` — page title + site title.
 - `<meta name="description">` — from frontmatter or a per-page override.
 - `<link rel="canonical">` — page's own URL, or `canonicalUrl` frontmatter override for mirrored posts.
@@ -392,6 +398,7 @@ Five directions spanning typographic voice, color temperature, density, hero tre
 5. **"Playful"** — friendly rounded sans (Nunito / Bricolage Grotesque), saturated accent (coral, teal, mustard), rounded card corners, expressive hover (card lifts, subtle tilt), small illustrative motif in hero, more chromatic dark mode, expressive motion.
 
 **Per-variant concrete artifacts:**
+
 - Latin web font file(s) in `src/assets/fonts/`.
 - Tailwind `@theme` color tokens (light + dark overrides under `[data-theme=dark]`).
 - Expressive Code theme pair.
@@ -458,6 +465,7 @@ Suggested sequencing. Each phase is mergeable in a PR.
 ## 18. Dependencies (summary)
 
 **Astro integrations:**
+
 - `@astrojs/mdx`
 - `@astrojs/sitemap`
 - `@astrojs/rss`
@@ -465,12 +473,14 @@ Suggested sequencing. Each phase is mergeable in a PR.
 - `astro-og-canvas`
 
 **Dev & tooling:**
+
 - `tailwindcss@4` + Vite plugin
 - `typescript`
 - `wrangler` (Cloudflare CLI for overrides)
 - `@types/node`
 
 **No runtime deps added for:**
+
 - Frontmatter parsing (loader uses Astro's `glob` delegate)
 - i18n (Astro built-in)
 - Analytics (Cloudflare injects beacon in dashboard)
@@ -478,6 +488,7 @@ Suggested sequencing. Each phase is mergeable in a PR.
 - View transitions (native browser API)
 
 **Plugins explicitly NOT used:**
+
 - `@astrojs/cloudflare` — not needed for static-only.
 - `starlight-llms-txt` — Starlight-specific; rolled our own endpoint.
 - `<ClientRouter />` — using native cross-document view transitions instead.

@@ -13,19 +13,22 @@ export interface Props {
 const { src, alt, caption, widths, sizes } = Astro.props;
 const isMetadata = typeof src !== "string";
 ---
+
 <figure class="figure">
-  {isMetadata ? (
-    <Image
-      src={src}
-      alt={alt}
-      widths={widths ?? [400, 800, 1200]}
-      sizes={sizes ?? "(min-width: 48rem) 42rem, 100vw"}
-      loading="lazy"
-      decoding="async"
-    />
-  ) : (
-    <img src={src} alt={alt} loading="lazy" decoding="async" />
-  )}
+  {
+    isMetadata ? (
+      <Image
+        src={src}
+        alt={alt}
+        widths={widths ?? [400, 800, 1200]}
+        sizes={sizes ?? "(min-width: 48rem) 42rem, 100vw"}
+        loading="lazy"
+        decoding="async"
+      />
+    ) : (
+      <img src={src} alt={alt} loading="lazy" decoding="async" />
+    )
+  }
   {caption && <figcaption>{caption}</figcaption>}
 </figure>
 

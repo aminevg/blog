@@ -10,7 +10,10 @@ export type TalkEntry = CollectionEntry<"talks">;
 
 // Astro's glob loader strips the trailing "/index" segment — our entry ids are
 // already shaped like "en/my-post" or "ja/my-talk". Split locale and slug.
-export function extractLocaleAndSlug(id: string): { locale: Locale; slug: string } {
+export function extractLocaleAndSlug(id: string): {
+  locale: Locale;
+  slug: string;
+} {
   const [locale, ...rest] = id.split("/");
   return { locale: locale as Locale, slug: rest.join("/") };
 }
@@ -37,14 +40,20 @@ export async function getTalks(locale: Locale): Promise<TalkEntry[]> {
   );
 }
 
-export async function postExists(locale: Locale, slug: string): Promise<boolean> {
+export async function postExists(
+  locale: Locale,
+  slug: string,
+): Promise<boolean> {
   const all = await getCollection("posts");
   return all.some(
     (entry) => entry.data.lang === locale && postSlug(entry) === slug,
   );
 }
 
-export async function talkExists(locale: Locale, slug: string): Promise<boolean> {
+export async function talkExists(
+  locale: Locale,
+  slug: string,
+): Promise<boolean> {
   const all = await getCollection("talks");
   return all.some(
     (entry) => entry.data.lang === locale && talkSlug(entry) === slug,
