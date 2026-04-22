@@ -1,6 +1,7 @@
 #!/bin/bash
 FILE=$(jq -r '.tool_input.file_path // empty')
 [ -z "$FILE" ] || [ ! -f "$FILE" ] && exit 0
+case "$FILE" in "$CLAUDE_PROJECT_DIR"/*) ;; *) exit 0 ;; esac
 cd "$CLAUDE_PROJECT_DIR"
 
 case "$FILE" in
