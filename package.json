@@ -8,7 +8,7 @@
     "build": "bun --bun x astro build",
     "preview": "bun --bun x astro preview",
     "astro": "bun --bun x astro",
-    "check": "bun --bun x astro-check",
+    "check": "bun --bun x astro check",
     "format": "bun x prettier --experimental-cli --write .",
     "format:check": "bun x prettier --experimental-cli --check .",
     "format:file": "bun x prettier --write",
