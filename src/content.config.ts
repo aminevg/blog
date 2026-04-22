@@ -1,5 +1,6 @@
-import { defineCollection, z } from "astro:content";
+import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
+import { z } from "astro/zod";
 import { talksLoader } from "~/content/talks-loader";
 
 const localeLiteral = z.enum(["en", "ja"]);
@@ -17,7 +18,7 @@ const posts = defineCollection({
       updatedDate: z.coerce.date().optional(),
       heroImage: image().optional(),
       lang: localeLiteral,
-      canonicalUrl: z.string().url().optional(),
+      canonicalUrl: z.url().optional(),
     }),
 });
 
@@ -29,9 +30,9 @@ const talks = defineCollection({
       description: z.string().max(200),
       event: z.string(),
       eventDate: z.coerce.date(),
-      slidesUrl: z.string().url(),
+      slidesUrl: z.url(),
       venue: z.string().optional(),
-      videoUrl: z.string().url().optional(),
+      videoUrl: z.url().optional(),
       lang: localeLiteral,
       // Derived by the loader from the og:image of slidesUrl (or fallback).
       // Marked optional so glob's initial populate doesn't reject; the loader
