@@ -1,0 +1,16 @@
+---
+title: "2026 年のプラットフォームエンジニアリング"
+abstract: |
+  プラットフォームチームが本当に所有すべきものと、意図して手放すべきものの整理。
+
+  SRE Next 2026（東京）での登壇。中規模の会社でプラットフォームチームが
+  落ち着く形のパターンについて、この2年で見えてきたこと。
+  インターフェースの引き方、権限の委譲、そして
+  「金メッキされた社内フレームワーク」の罠を避ける方法。
+event: "SRE Next"
+eventDate: 2026-02-14
+venue: "東京"
+slidesUrl: "https://speakerdeck.com/example/platform-engineering-2026"
+videoUrl: "https://www.youtube.com/watch?v=example"
+lang: ja
+---

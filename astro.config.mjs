@@ -1,16 +1,13 @@
-import { defineConfig } from "astro/config";
+import { defineConfig, fontProviders } from "astro/config";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import expressiveCode from "astro-expressive-code";
 import tailwindcss from "@tailwindcss/vite";
 
-// Expressive Code config lives in src/config/expressive-code.ts so it can share
-// the site design tokens; see Section 12 of plans/implementation.md.
 import { expressiveCodeOptions } from "./src/config/expressive-code.ts";
 
 // https://astro.build/config
 export default defineConfig({
-  // TODO: replace with the production domain once attached in Cloudflare.
   site: "https://blog.aminevg.dev",
   trailingSlash: "always",
   build: {
@@ -25,9 +22,49 @@ export default defineConfig({
     },
   },
   image: {
-    // Remote image allowlist starts empty; populate on demand.
     remotePatterns: [],
   },
+  fonts: [
+    {
+      provider: fontProviders.google(),
+      name: "EB Garamond",
+      cssVariable: "--font-serif-web",
+      weights: [400, 500],
+      styles: ["normal", "italic"],
+      subsets: ["latin", "latin-ext"],
+      fallbacks: [
+        "Hiragino Mincho ProN",
+        "Yu Mincho",
+        "YuMincho",
+        "Noto Serif JP",
+        "serif",
+      ],
+    },
+    {
+      provider: fontProviders.google(),
+      name: "IBM Plex Sans",
+      cssVariable: "--font-sans-web",
+      weights: [500],
+      styles: ["normal"],
+      subsets: ["latin", "latin-ext"],
+      fallbacks: [
+        "Hiragino Sans",
+        "Yu Gothic",
+        "Noto Sans CJK JP",
+        "system-ui",
+        "sans-serif",
+      ],
+    },
+    {
+      provider: fontProviders.google(),
+      name: "Noto Serif JP",
+      cssVariable: "--font-serif-jp",
+      weights: [400],
+      styles: ["normal"],
+      subsets: ["japanese"],
+      fallbacks: ["Hiragino Mincho ProN", "Yu Mincho", "YuMincho", "serif"],
+    },
+  ],
   integrations: [
     expressiveCode(expressiveCodeOptions),
     mdx(),

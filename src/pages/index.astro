@@ -1,6 +1,3 @@
 ---
-// Root redirect — Astro emits this as a static meta-refresh + 301 header hint
-// when building static. The i18n config's `redirectToDefaultLocale` relies on
-// a root index page existing; this page fulfills that requirement.
 return Astro.redirect("/en/", 308);
 ---

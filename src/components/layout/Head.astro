@@ -1,21 +1,15 @@
 ---
 import type { Locale } from "~/config/site";
 import { SITE } from "~/config/site";
-import ThemeScript from "~/components/layout/ThemeScript.astro";
 
 export interface Props {
   locale: Locale;
   title: string;
   description: string;
-  // Canonical URL for this page. If omitted, Astro.url is used.
   canonical?: string | URL;
-  // OG image URL (absolute or relative to site).
   ogImage?: string | URL;
-  // When both translations exist, pass the URL of the sibling.
   alternateUrl?: string | null;
-  // Always emit `x-default` → this URL (English version).
   xDefaultUrl?: string;
-  // Article-specific metadata.
   article?: {
     publishedTime?: Date;
     modifiedTime?: Date;
@@ -49,8 +43,6 @@ const otherLocaleCode: Locale = locale === "en" ? "ja" : "en";
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="generator" content={Astro.generator} />
 
-  <ThemeScript />
-
   <title>{fullTitle}</title>
   <meta name="description" content={description} />
 
@@ -78,7 +70,6 @@ const otherLocaleCode: Locale = locale === "en" ? "ja" : "en";
     )
   }
 
-  {/* Open Graph */}
   <meta property="og:title" content={fullTitle} />
   <meta property="og:description" content={description} />
   <meta property="og:url" content={canonicalUrl} />
@@ -111,31 +102,24 @@ const otherLocaleCode: Locale = locale === "en" ? "ja" : "en";
     )
   }
 
-  {/* Twitter / X */}
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={fullTitle} />
   <meta name="twitter:description" content={description} />
   <meta name="twitter:image" content={resolvedOgImage} />
 
-  {/* Theme color per light/dark */}
   <meta
     name="theme-color"
     media="(prefers-color-scheme: light)"
-    content="#f7f4ee"
+    content="#fdf9f0"
   />
   <meta
     name="theme-color"
     media="(prefers-color-scheme: dark)"
-    content="#1a1815"
+    content="#1a1614"
   />
 
-  {/* Icons / manifest */}
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-  <link rel="icon" href="/favicon.ico" sizes="32x32" />
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-  <link rel="manifest" href="/site.webmanifest" />
 
-  {/* RSS */}
   <link
     rel="alternate"
     type="application/rss+xml"
@@ -149,19 +133,7 @@ const otherLocaleCode: Locale = locale === "en" ? "ja" : "en";
     href="/ja/rss.xml"
   />
 
-  {/* llms.txt */}
   <link rel="alternate" type="text/markdown" href={`/${locale}/llms.txt`} />
 
-  {/* Preload Latin variable font for EN pages only — avoids CJK page waste. */}
-  {
-    locale === "en" && (
-      <link
-        rel="preload"
-        href="/fonts/source-serif-4.woff2"
-        as="font"
-        type="font/woff2"
-        crossorigin
-      />
-    )
-  }
+  <slot />
 </head>

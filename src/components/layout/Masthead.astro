@@ -1,0 +1,162 @@
+---
+import type { Locale } from "~/config/site";
+import { SITE } from "~/config/site";
+import { t, otherLocale } from "~/i18n/ui";
+import { localeHome, localeBlog, localeTalks, localeAbout } from "~/lib/paths";
+
+export interface Props {
+  locale: Locale;
+  // URL of the equivalent page in the other locale, or null if absent.
+  otherLocaleHref: string | null;
+}
+
+const { locale, otherLocaleHref } = Astro.props;
+const strings = t(locale);
+const subtitle = SITE.subtitle[locale];
+
+const navItems = [
+  { href: localeBlog(locale), label: strings.nav.blog },
+  { href: localeTalks(locale), label: strings.nav.talks },
+  { href: localeAbout(locale), label: strings.nav.about },
+];
+
+const currentPath = Astro.url.pathname;
+const target = otherLocale(locale);
+const langLabel =
+  target === "en"
+    ? strings.languageSwitcher.toEnglish
+    : strings.languageSwitcher.toJapanese;
+---
+
+<header class="masthead">
+  <h1 class="masthead__title">
+    <a href={localeHome(locale)} rel="home">{SITE.author.name}</a>
+  </h1>
+  <p class="masthead__subtitle"><em>{subtitle}</em></p>
+  <nav class="masthead__nav" aria-label="Primary">
+    {
+      navItems.map((item, index) => (
+        <>
+          {index > 0 && (
+            <span class="masthead__sep" aria-hidden="true">
+              ·
+            </span>
+          )}
+          <a
+            href={item.href}
+            aria-current={
+              currentPath.startsWith(item.href) ? "page" : undefined
+            }
+          >
+            {item.label}
+          </a>
+        </>
+      ))
+    }
+    <span class="masthead__sep" aria-hidden="true">·</span>
+    {
+      otherLocaleHref ? (
+        <a
+          class="masthead__lang"
+          href={otherLocaleHref}
+          hreflang={target}
+          lang={target}
+          rel="alternate"
+        >
+          {langLabel}
+        </a>
+      ) : (
+        <span
+          class="masthead__lang masthead__lang--disabled"
+          aria-disabled="true"
+        >
+          {langLabel}
+        </span>
+      )
+    }
+  </nav>
+</header>
+
+<style>
+  .masthead {
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--color-rule);
+    margin-bottom: 2rem;
+  }
+
+  .masthead__title {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-style: italic;
+    font-size: clamp(2.75rem, 6vw, 4.5rem);
+    letter-spacing: -0.01em;
+    line-height: 0.95;
+    margin: 0 0 0.75rem;
+  }
+
+  .masthead__title a {
+    text-decoration: none;
+    color: var(--color-fg);
+  }
+
+  .masthead__title a:hover {
+    color: var(--color-accent);
+  }
+
+  .masthead__subtitle {
+    font-size: 1.25rem;
+    color: var(--color-fg-muted);
+    max-width: 34ch;
+    margin: 0 0 1.5rem;
+  }
+
+  .masthead__nav {
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-weight: 500;
+    color: var(--color-fg-muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    align-items: baseline;
+  }
+
+  .masthead__nav a {
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    padding-bottom: 0.1rem;
+    transition:
+      border-color 160ms,
+      color 160ms;
+  }
+
+  .masthead__nav a:hover {
+    color: var(--color-fg);
+    border-bottom-color: var(--color-fg);
+  }
+
+  .masthead__nav a[aria-current="page"] {
+    color: var(--color-fg);
+    border-bottom-color: var(--color-accent);
+  }
+
+  .masthead__sep {
+    color: var(--color-fg-subtle);
+  }
+
+  .masthead__lang {
+    font-family: var(--font-serif);
+    font-style: italic;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 0.95rem;
+    font-weight: 400;
+  }
+
+  .masthead__lang--disabled {
+    color: var(--color-fg-subtle);
+    cursor: not-allowed;
+  }
+</style>

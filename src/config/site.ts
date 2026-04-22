@@ -1,6 +1,9 @@
 export const SITE = {
   title: "Amine Ilidrissi",
-  // Short sentence used in OG, feeds, and llms.txt.
+  subtitle: {
+    en: "Notes on software, operations, and the long hours between them.",
+    ja: "ソフトウェアと運用、そしてその合間の長い時間についてのノート。",
+  },
   description: {
     en: "Notes on software, SRE, and life between Paris and Tokyo — by Amine Ilidrissi.",
     ja: "パリと東京の間で書く、ソフトウェア・SRE・日々のノート。",
@@ -10,9 +13,12 @@ export const SITE = {
     url: "https://aminevg.dev",
     email: "amine.ilidrissi@3-shake.com",
   },
+  social: {
+    x: "aminevg",
+    github: "aminevg",
+  },
   locales: ["en", "ja"] as const,
   defaultLocale: "en" as const,
-  // Number of items on the home listings.
   home: {
     postsCount: 5,
     talksCount: 3,

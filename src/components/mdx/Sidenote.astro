@@ -1,0 +1,98 @@
+---
+// Tufte-style marginalia. Auto-numbered via a CSS counter scoped to the
+// surrounding `.post` article. On wide viewports the body floats in the
+// right gutter; on narrow viewports it collapses to an inline disclosure.
+---
+
+<span class="sidenote">
+  <details class="sidenote__disclosure">
+    <summary class="sidenote__ref" aria-label="Sidenote"><sup></sup></summary>
+    <aside class="sidenote__body" role="note">
+      <sup></sup>
+      <slot />
+    </aside>
+  </details>
+</span>
+
+<style is:global>
+  .sidenote {
+    counter-increment: sidenote;
+    position: relative;
+  }
+
+  .sidenote__disclosure {
+    display: inline;
+  }
+
+  .sidenote__ref {
+    cursor: pointer;
+    list-style: none;
+    display: inline;
+    color: var(--color-accent);
+    margin-left: 0.12em;
+  }
+
+  .sidenote__ref::-webkit-details-marker,
+  .sidenote__ref::marker {
+    display: none;
+  }
+
+  .sidenote__ref sup {
+    font-feature-settings: "sups";
+    font-size: 0.75em;
+  }
+
+  .sidenote__ref sup::before {
+    content: counter(sidenote);
+  }
+
+  .sidenote__body {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--color-fg-muted);
+  }
+
+  .sidenote__body sup {
+    color: var(--color-accent);
+    margin-right: 0.3em;
+    font-style: normal;
+    font-feature-settings: "sups";
+  }
+
+  .sidenote__body sup::before {
+    content: counter(sidenote);
+  }
+
+  /* Narrow: inline disclosure. */
+  .sidenote__body {
+    display: block;
+    margin: 0.75rem 0;
+    padding: 0.5rem 0 0.5rem 1rem;
+    border-left: 2px solid var(--color-rule);
+    background: color-mix(in oklab, var(--color-surface) 70%, transparent);
+  }
+
+  /* Wide: float into the right gutter, non-dismissible. */
+  @media (min-width: 62rem) {
+    .post__body .sidenote__body {
+      position: absolute;
+      width: 18rem;
+      left: calc(100% + 3rem);
+      margin: 0;
+      padding: 0 0 0 1rem;
+      border-left: 1px solid var(--color-rule);
+      background: transparent;
+      font-size: 0.9rem;
+    }
+
+    .post__body .sidenote__disclosure[open] {
+      /* no-op; present to allow focus styles if needed */
+    }
+
+    .post__body .sidenote__ref {
+      pointer-events: none;
+    }
+  }
+</style>

@@ -1,12 +1,14 @@
 import { OGImageRoute } from "astro-og-canvas";
 import { getCollection } from "astro:content";
-import { postSlug, talkSlug } from "~/lib/content";
+import { postSlug } from "~/lib/content";
 import { SITE } from "~/config/site";
+
+type Kind = "post" | "blog" | "talks" | "about" | "home";
 
 type PageData = {
   title: string;
   description: string;
-  kind: "post" | "talk" | "page";
+  kind: Kind;
   locale: "en" | "ja";
 };
 
@@ -23,24 +25,12 @@ for (const entry of posts) {
   };
 }
 
-const talks = await getCollection("talks");
-for (const entry of talks) {
-  const key = `${entry.data.lang}/talks/${talkSlug(entry)}`;
-  pages[key] = {
-    title: entry.data.title,
-    description: entry.data.description,
-    kind: "talk",
-    locale: entry.data.lang,
-  };
-}
-
 const aboutPages = await getCollection("pages");
 for (const entry of aboutPages) {
-  const key = `${entry.data.lang}/about`;
-  pages[key] = {
+  pages[`${entry.data.lang}/about`] = {
     title: entry.data.title,
     description: entry.data.description,
-    kind: "page",
+    kind: "about",
     locale: entry.data.lang,
   };
 }
@@ -48,11 +38,38 @@ for (const entry of aboutPages) {
 for (const locale of SITE.locales) {
   pages[`${locale}/home`] = {
     title: SITE.title,
+    description: SITE.subtitle[locale],
+    kind: "home",
+    locale,
+  };
+  pages[`${locale}/blog`] = {
+    title: locale === "en" ? "Blog" : "ブログ",
     description: SITE.description[locale],
-    kind: "page",
+    kind: "blog",
+    locale,
+  };
+  pages[`${locale}/talks`] = {
+    title: locale === "en" ? "Talks" : "登壇",
+    description: SITE.description[locale],
+    kind: "talks",
     locale,
   };
 }
+
+// Light-mode Tufte palette only. No dark alternate.
+const BG: [number, number, number] = [253, 249, 240];
+const FG: [number, number, number] = [22, 19, 17];
+const FG_MUTED: [number, number, number] = [90, 82, 74];
+const ACCENT: [number, number, number] = [122, 26, 26];
+
+const SERIF_FAMILIES = [
+  "EB Garamond",
+  "Hiragino Mincho ProN",
+  "Yu Mincho",
+  "Noto Serif JP",
+  "Georgia",
+  "serif",
+];
 
 export const { getStaticPaths, GET } = await OGImageRoute({
   param: "route",
@@ -60,42 +77,27 @@ export const { getStaticPaths, GET } = await OGImageRoute({
   getImageOptions: (_path, page: PageData) => ({
     title: page.title,
     description: page.description,
-    bgGradient: [
-      [247, 244, 238],
-      [237, 228, 215],
-    ],
+    bgGradient: [BG, BG],
     border: {
-      color: [123, 45, 38],
+      color: ACCENT,
       width: 8,
       side: "inline-start",
     },
     padding: 80,
     font: {
       title: {
-        color: [26, 21, 18],
-        size: 64,
-        weight: "SemiBold",
-        families: [
-          "Fraunces",
-          "Source Serif 4",
-          "Hiragino Mincho ProN",
-          "Yu Mincho",
-          "Noto Serif JP",
-          "Georgia",
-          "serif",
-        ],
+        color: FG,
+        size: 80,
+        lineHeight: 1,
+        weight: "Medium",
+        families: SERIF_FAMILIES,
       },
       description: {
-        color: [79, 71, 62],
+        color: FG_MUTED,
         size: 28,
-        families: [
-          "Source Serif 4",
-          "Hiragino Mincho ProN",
-          "Yu Mincho",
-          "Noto Serif JP",
-          "Georgia",
-          "serif",
-        ],
+        lineHeight: 1.4,
+        weight: "Normal",
+        families: SERIF_FAMILIES,
       },
     },
   }),

@@ -1,15 +1,12 @@
 import { getCollection, type CollectionEntry } from "astro:content";
 import type { Locale } from "~/config/site";
 
-// Content collection IDs use the glob pattern "**/index.mdx" with base pointing
-// at the locale-prefixed directory. So an entry id looks like "en/my-slug/index".
-// We strip the "/index" suffix and split locale/slug.
+// Collection IDs look like "en/my-post" or "ja/my-talk" (Astro strips the
+// trailing `/index` segment). Split locale and slug.
 
 export type PostEntry = CollectionEntry<"posts">;
 export type TalkEntry = CollectionEntry<"talks">;
 
-// Astro's glob loader strips the trailing "/index" segment — our entry ids are
-// already shaped like "en/my-post" or "ja/my-talk". Split locale and slug.
 export function extractLocaleAndSlug(id: string): {
   locale: Locale;
   slug: string;
@@ -19,10 +16,6 @@ export function extractLocaleAndSlug(id: string): {
 }
 
 export function postSlug(entry: PostEntry): string {
-  return extractLocaleAndSlug(entry.id).slug;
-}
-
-export function talkSlug(entry: TalkEntry): string {
   return extractLocaleAndSlug(entry.id).slug;
 }
 
@@ -47,15 +40,5 @@ export async function postExists(
   const all = await getCollection("posts");
   return all.some(
     (entry) => entry.data.lang === locale && postSlug(entry) === slug,
-  );
-}
-
-export async function talkExists(
-  locale: Locale,
-  slug: string,
-): Promise<boolean> {
-  const all = await getCollection("talks");
-  return all.some(
-    (entry) => entry.data.lang === locale && talkSlug(entry) === slug,
   );
 }

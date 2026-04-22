@@ -2,7 +2,7 @@
 import type { Locale } from "~/config/site";
 import { SITE } from "~/config/site";
 import { t } from "~/i18n/ui";
-import { rssUrl, localeHome } from "~/lib/paths";
+import { rssUrl } from "~/lib/paths";
 
 export interface Props {
   locale: Locale;
@@ -10,66 +10,56 @@ export interface Props {
 
 const { locale } = Astro.props;
 const strings = t(locale);
-const year = new Date().getFullYear();
+const xHref = `https://x.com/${SITE.social.x}`;
+const githubHref = `https://github.com/${SITE.social.github}`;
 ---
 
-<footer class="site-footer">
-  <div class="site-footer__inner">
-    <p class="site-footer__copy">
-      <a href={localeHome(locale)}>{SITE.author.name}</a>
-      <span class="site-footer__sep">·</span>
-      <span>© {year}</span>
-    </p>
-    <nav class="site-footer__nav" aria-label="Footer">
-      <a href={rssUrl("en")}>{strings.feed.rss} (EN)</a>
-      <a href={rssUrl("ja")}>{strings.feed.rss} (JA)</a>
-      <a href={SITE.author.url} rel="me">aminevg.dev</a>
-    </nav>
-  </div>
+<footer class="footer">
+  <nav class="footer__nav" aria-label="Social and syndication">
+    <a href={xHref} target="_blank" rel="me noopener">X</a>
+    <span aria-hidden="true">·</span>
+    <a href={githubHref} target="_blank" rel="me noopener">GitHub</a>
+    <span aria-hidden="true">·</span>
+    <a href={rssUrl(locale)}>{strings.feed.rss}</a>
+  </nav>
 </footer>
 
 <style>
-  .site-footer {
-    margin-top: 6rem;
-    border-top: 1px solid var(--color-border);
-    padding: 2rem 0 3rem;
+  .footer {
+    margin-top: 4rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-rule);
     font-family: var(--font-sans);
-    font-size: 0.8125rem;
-    color: var(--color-fg-muted);
-  }
-
-  .site-footer__inner {
-    max-width: 72rem;
-    margin: 0 auto;
-    padding: 0 clamp(1rem, 4vw, 2rem);
-    display: flex;
-    justify-content: space-between;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-  }
-
-  .site-footer__copy a {
+    font-size: 0.72rem;
     font-weight: 500;
-    color: var(--color-fg);
-    text-decoration: none;
-  }
-
-  .site-footer__sep {
-    margin: 0 0.4rem;
-    color: var(--color-fg-subtle);
-  }
-
-  .site-footer__nav {
-    display: flex;
-    gap: 1.25rem;
-  }
-
-  .site-footer__nav a {
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
     color: var(--color-fg-muted);
-    text-decoration: none;
   }
 
-  .site-footer__nav a:hover {
+  .footer__nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    align-items: baseline;
+  }
+
+  .footer__nav a {
+    text-decoration: none;
+    color: var(--color-fg-muted);
+    border-bottom: 1px solid transparent;
+    padding-bottom: 0.1rem;
+    transition:
+      color 160ms,
+      border-color 160ms;
+  }
+
+  .footer__nav a:hover {
     color: var(--color-fg);
+    border-bottom-color: var(--color-fg);
+  }
+
+  .footer__nav span {
+    color: var(--color-fg-subtle);
   }
 </style>
