@@ -70,7 +70,9 @@ function paragraphs(text: string): string[] {
                   <span aria-hidden="true"> · </span>
                   <FormattedDate date={eventDate} locale={locale} />
                 </p>
-                <h3 class="entry__title">{title}</h3>
+                <h3 class="entry__title">
+                  <span>{title}</span>
+                </h3>
                 <div class="entry__abstract">
                   {paragraphs(abstract).map((p) => (
                     <p>{p}</p>
@@ -149,7 +151,7 @@ function paragraphs(text: string): string[] {
     color: var(--color-fg);
   }
 
-  .entry__link:hover .entry__title {
+  .entry__link:hover .entry__title span {
     background-image: linear-gradient(
       var(--color-highlight),
       var(--color-highlight)
@@ -157,6 +159,8 @@ function paragraphs(text: string): string[] {
     background-size: 100% 0.3em;
     background-position: 0 85%;
     background-repeat: no-repeat;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
   }
 
   .entry__abstract {

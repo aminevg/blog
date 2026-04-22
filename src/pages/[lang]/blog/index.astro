@@ -45,7 +45,9 @@ const otherHref = localeBlog(otherLocale);
                 <p class="entry__meta">
                   <FormattedDate date={entry.data.pubDate} locale={locale} />
                 </p>
-                <h3 class="entry__title">{entry.data.title}</h3>
+                <h3 class="entry__title">
+                  <span>{entry.data.title}</span>
+                </h3>
                 <p class="entry__description">{entry.data.description}</p>
               </a>
             </li>
@@ -110,7 +112,7 @@ const otherHref = localeBlog(otherLocale);
     color: var(--color-fg);
   }
 
-  .entry__link:hover .entry__title {
+  .entry__link:hover .entry__title span {
     background-image: linear-gradient(
       var(--color-highlight),
       var(--color-highlight)
@@ -118,6 +120,8 @@ const otherHref = localeBlog(otherLocale);
     background-size: 100% 0.3em;
     background-position: 0 85%;
     background-repeat: no-repeat;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
   }
 
   .entry__description {
