@@ -15,20 +15,14 @@
 // click on narrow.
 ---
 
-<span class="sidenote">
-  <button
+<span class="sidenote"
+  ><button
     type="button"
     class="sidenote__ref"
     aria-label="Sidenote"
-    aria-expanded="false"
-  >
-    <sup></sup>
-  </button>
-  <span class="sidenote__body" role="note">
-    <sup></sup>
-    <slot />
-  </span>
-</span>
+    aria-expanded="false"><sup></sup></button
+  ><span class="sidenote__body" role="note"><sup></sup> <slot /></span></span
+>
 
 <style is:global>
   .sidenote {
@@ -38,13 +32,13 @@
 
   .sidenote__ref {
     appearance: none;
+    margin: 0;
     padding: 0;
     border: 0;
     background: transparent;
     color: var(--color-accent);
     font: inherit;
     cursor: pointer;
-    margin-left: 0.12em;
     display: inline;
   }
 
