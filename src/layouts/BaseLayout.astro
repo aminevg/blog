@@ -53,6 +53,22 @@ const {
     {locale === "ja" && <Font cssVariable="--font-serif-jp" preload />}
   </Head>
   <body>
+    <script is:inline>
+      // Sidenote viewport sync: force open on wide so the body floats in the
+      // right gutter; let the disclosure behave normally on narrow.
+      (() => {
+        const mq = window.matchMedia("(min-width: 62rem)");
+        const sync = () => {
+          const open = mq.matches;
+          for (const d of document.querySelectorAll(".sidenote__disclosure")) {
+            d.open = open;
+          }
+        };
+        sync();
+        window.addEventListener("resize", sync);
+        document.addEventListener("astro:page-load", sync);
+      })();
+    </script>
     <a href="#main" class="skip-link">Skip to content</a>
     <div class="page">
       {!bare && <Masthead locale={locale} otherLocaleHref={alternateUrl} />}
