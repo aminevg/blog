@@ -53,22 +53,6 @@ const {
     {locale === "ja" && <Font cssVariable="--font-serif-jp" preload />}
   </Head>
   <body>
-    <script is:inline>
-      // Sidenote viewport sync: force open on wide so the body floats in the
-      // right gutter; let the disclosure behave normally on narrow.
-      (() => {
-        const mq = window.matchMedia("(min-width: 62rem)");
-        const sync = () => {
-          const open = mq.matches;
-          for (const d of document.querySelectorAll(".sidenote__disclosure")) {
-            d.open = open;
-          }
-        };
-        sync();
-        window.addEventListener("resize", sync);
-        document.addEventListener("astro:page-load", sync);
-      })();
-    </script>
     <a href="#main" class="skip-link">Skip to content</a>
     <div class="page">
       {!bare && <Masthead locale={locale} otherLocaleHref={alternateUrl} />}
@@ -77,6 +61,23 @@ const {
       </main>
       <Footer locale={locale} />
     </div>
+    <script is:inline>
+      // Sidenote toggle. On narrow viewports, clicking the ref button toggles
+      // the .is-open class on the surrounding .sidenote. On wide viewports,
+      // the body is always visible (via CSS) and the button is inert.
+      (() => {
+        const toggle = (e) => {
+          const btn = e.target.closest(".sidenote__ref");
+          if (!btn) return;
+          const sn = btn.closest(".sidenote");
+          if (!sn) return;
+          sn.classList.toggle("is-open");
+          const opened = sn.classList.contains("is-open");
+          btn.setAttribute("aria-expanded", opened ? "true" : "false");
+        };
+        document.addEventListener("click", toggle);
+      })();
+    </script>
 
     <style>
       .skip-link {

@@ -1,17 +1,33 @@
 ---
 // Tufte-style marginalia. Auto-numbered via a CSS counter scoped to the
-// surrounding `.post` article. On wide viewports the body floats in the
-// right gutter; on narrow viewports it collapses to an inline disclosure.
+// surrounding `.post` article.
+//
+// We do NOT wrap the body in a <details>/<summary> disclosure. The MDX
+// author always writes the sidenote mid-paragraph (`text.<Sidenote>note</Sidenote>`),
+// and browsers' HTML parser treats <details> as flow content: when encountered
+// inside a <p>, the open <p> is closed automatically and <details> becomes a
+// sibling of the paragraph. So the note would drop out of its sentence and
+// render on its own line, regardless of CSS.
+//
+// Instead: a <button> toggle + a <span> body (both phrasing content, both
+// legal children of <p>). The viewport-sync script in BaseLayout toggles the
+// `is-open` class so the body is always visible on wide and collapsible by
+// click on narrow.
 ---
 
 <span class="sidenote">
-  <details class="sidenote__disclosure">
-    <summary class="sidenote__ref" aria-label="Sidenote"><sup></sup></summary>
-    <aside class="sidenote__body" role="note">
-      <sup></sup>
-      <slot />
-    </aside>
-  </details>
+  <button
+    type="button"
+    class="sidenote__ref"
+    aria-label="Sidenote"
+    aria-expanded="false"
+  >
+    <sup></sup>
+  </button>
+  <span class="sidenote__body" role="note">
+    <sup></sup>
+    <slot />
+  </span>
 </span>
 
 <style is:global>
@@ -20,21 +36,16 @@
     position: relative;
   }
 
-  .sidenote__disclosure {
-    display: inline;
-  }
-
   .sidenote__ref {
-    cursor: pointer;
-    list-style: none;
-    display: inline;
+    appearance: none;
+    padding: 0;
+    border: 0;
+    background: transparent;
     color: var(--color-accent);
+    font: inherit;
+    cursor: pointer;
     margin-left: 0.12em;
-  }
-
-  .sidenote__ref::-webkit-details-marker,
-  .sidenote__ref::marker {
-    display: none;
+    display: inline;
   }
 
   .sidenote__ref sup {
@@ -47,6 +58,11 @@
   }
 
   .sidenote__body {
+    display: block;
+    margin: 0.75rem 0;
+    padding: 0.5rem 0 0.5rem 1rem;
+    border-left: 2px solid var(--color-rule);
+    background: color-mix(in oklab, var(--color-surface) 70%, transparent);
     font-family: var(--font-serif);
     font-style: italic;
     font-size: 0.95rem;
@@ -65,30 +81,30 @@
     content: counter(sidenote);
   }
 
-  /* Narrow: inline disclosure. */
-  .sidenote__body {
-    display: block;
-    margin: 0.75rem 0;
-    padding: 0.5rem 0 0.5rem 1rem;
-    border-left: 2px solid var(--color-rule);
-    background: color-mix(in oklab, var(--color-surface) 70%, transparent);
+  /* Narrow: body hidden by default, shown when sidenote is .is-open. */
+  @media (max-width: 61.99rem) {
+    .sidenote__body {
+      display: none;
+    }
+    .sidenote.is-open .sidenote__body {
+      display: block;
+    }
   }
 
-  /* Wide: float into the right gutter, non-dismissible. */
+  /* Wide: body floats into the right gutter, anchored to the line where the
+     superscript sits. The body column is 32rem; the float is 18rem with a
+     negative right-margin that pulls it past the column edge. The ref button
+     becomes inert since the body is already visible. */
   @media (min-width: 62rem) {
     .post__body .sidenote__body {
-      position: absolute;
+      float: right;
+      clear: right;
       width: 18rem;
-      left: calc(100% + 3rem);
-      margin: 0;
+      margin: 0 -21rem 0.5rem 0;
       padding: 0 0 0 1rem;
       border-left: 1px solid var(--color-rule);
       background: transparent;
       font-size: 0.9rem;
-    }
-
-    .post__body .sidenote__disclosure[open] {
-      /* no-op; present to allow focus styles if needed */
     }
 
     .post__body .sidenote__ref {
