@@ -78,9 +78,6 @@ function paragraphs(text: string): string[] {
                     <p>{p}</p>
                   ))}
                 </div>
-                <p class="entry__action">
-                  {strings.talk.viewSlides} <span aria-hidden="true">↗</span>
-                </p>
               </a>
               {videoUrl && (
                 <p class="entry__recording">
@@ -176,16 +173,6 @@ function paragraphs(text: string): string[] {
 
   .entry__abstract p:last-child {
     margin-bottom: 0;
-  }
-
-  .entry__action {
-    font-family: var(--font-sans);
-    font-size: 0.72rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    color: var(--color-accent);
-    margin: 0.75rem 0 0;
   }
 
   .entry__recording {

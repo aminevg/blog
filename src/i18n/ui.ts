@@ -29,7 +29,6 @@ export const UI = {
       readingAlsoIn: "Also in 日本語",
     },
     talk: {
-      viewSlides: "View slides",
       watchRecording: "Watch recording",
     },
     languageSwitcher: {
@@ -75,7 +74,6 @@ export const UI = {
       readingAlsoIn: "English version available",
     },
     talk: {
-      viewSlides: "スライドを見る",
       watchRecording: "録画を見る",
     },
     languageSwitcher: {
