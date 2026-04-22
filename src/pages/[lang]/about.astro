@@ -24,6 +24,7 @@ const otherHref = otherEntry ? localeAbout(otherLocale) : null;
 
 const { Content } = await render(entry);
 ---
+
 <BaseLayout
   locale={locale}
   title={entry.data.title}
@@ -87,7 +88,11 @@ const { Content } = await render(entry);
   .prose a {
     color: var(--color-accent);
     text-decoration: underline;
-    text-decoration-color: color-mix(in oklab, var(--color-accent) 40%, transparent);
+    text-decoration-color: color-mix(
+      in oklab,
+      var(--color-accent) 40%,
+      transparent
+    );
     text-underline-offset: 0.15em;
   }
 

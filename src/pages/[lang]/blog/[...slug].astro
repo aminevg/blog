@@ -27,13 +27,19 @@ const otherLocale: Locale = locale === "en" ? "ja" : "en";
 const slug = postSlug(entry);
 const strings = t(locale);
 
-const otherHref = (await postExists(otherLocale, slug)) ? postUrl(otherLocale, slug) : null;
-const xDefault = (await postExists("en", slug)) ? postUrl("en", slug) : undefined;
+const otherHref = (await postExists(otherLocale, slug))
+  ? postUrl(otherLocale, slug)
+  : null;
+const xDefault = (await postExists("en", slug))
+  ? postUrl("en", slug)
+  : undefined;
 
 const { Content } = await render(entry);
-const { title, description, pubDate, updatedDate, heroImage, canonicalUrl } = entry.data;
+const { title, description, pubDate, updatedDate, heroImage, canonicalUrl } =
+  entry.data;
 const heroTransitionName = `thumb-post-${slug}`;
 ---
+
 <BaseLayout
   locale={locale}
   title={title}
@@ -52,28 +58,35 @@ const heroTransitionName = `thumb-post-${slug}`;
           {strings.post.published}{" "}
           <FormattedDate date={pubDate} locale={locale} />
         </span>
-        {updatedDate && (
-          <span class="post__meta-updated">
-            {" · "}
-            {strings.post.updated}{" "}
-            <FormattedDate date={updatedDate} locale={locale} />
-          </span>
-        )}
+        {
+          updatedDate && (
+            <span class="post__meta-updated">
+              {" · "}
+              {strings.post.updated}{" "}
+              <FormattedDate date={updatedDate} locale={locale} />
+            </span>
+          )
+        }
       </p>
     </header>
 
-    {heroImage && (
-      <div class="post__hero" style={`view-transition-name: ${heroTransitionName}`}>
-        <Image
-          src={heroImage}
-          alt=""
-          widths={[640, 1024, 1536]}
-          sizes="(min-width: 48rem) 42rem, 100vw"
-          loading="eager"
-          decoding="async"
-        />
-      </div>
-    )}
+    {
+      heroImage && (
+        <div
+          class="post__hero"
+          style={`view-transition-name: ${heroTransitionName}`}
+        >
+          <Image
+            src={heroImage}
+            alt=""
+            widths={[640, 1024, 1536]}
+            sizes="(min-width: 48rem) 42rem, 100vw"
+            loading="eager"
+            decoding="async"
+          />
+        </div>
+      )
+    }
 
     <div class="post__body">
       <Content />

@@ -8,7 +8,10 @@ export interface Props {
 
 const { url, caption } = Astro.props;
 ---
-{/* Lightweight non-JS embed — link out rather than injecting the Twitter SDK. */}
+
+{
+  /* Lightweight non-JS embed — link out rather than injecting the Twitter SDK. */
+}
 <figure class="tweet">
   <a href={url} target="_blank" rel="noopener noreferrer" class="tweet__link">
     {url}

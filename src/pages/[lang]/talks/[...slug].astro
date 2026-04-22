@@ -27,13 +27,27 @@ const otherLocale: Locale = locale === "en" ? "ja" : "en";
 const slug = talkSlug(entry);
 const strings = t(locale);
 
-const otherHref = (await talkExists(otherLocale, slug)) ? talkUrl(otherLocale, slug) : null;
-const xDefault = (await talkExists("en", slug)) ? talkUrl("en", slug) : undefined;
+const otherHref = (await talkExists(otherLocale, slug))
+  ? talkUrl(otherLocale, slug)
+  : null;
+const xDefault = (await talkExists("en", slug))
+  ? talkUrl("en", slug)
+  : undefined;
 
 const { Content } = await render(entry);
-const { title, description, event, eventDate, venue, slidesUrl, videoUrl, thumbnail } = entry.data;
+const {
+  title,
+  description,
+  event,
+  eventDate,
+  venue,
+  slidesUrl,
+  videoUrl,
+  thumbnail,
+} = entry.data;
 const transitionName = `thumb-talk-${slug}`;
 ---
+
 <BaseLayout
   locale={locale}
   title={title}
@@ -54,18 +68,23 @@ const transitionName = `thumb-talk-${slug}`;
       <p class="talk__description">{description}</p>
     </header>
 
-    {thumbnail && (
-      <div class="talk__hero" style={`view-transition-name: ${transitionName}`}>
-        <Image
-          src={thumbnail}
-          alt=""
-          widths={[640, 1024, 1536]}
-          sizes="(min-width: 48rem) 42rem, 100vw"
-          loading="eager"
-          decoding="async"
-        />
-      </div>
-    )}
+    {
+      thumbnail && (
+        <div
+          class="talk__hero"
+          style={`view-transition-name: ${transitionName}`}
+        >
+          <Image
+            src={thumbnail}
+            alt=""
+            widths={[640, 1024, 1536]}
+            sizes="(min-width: 48rem) 42rem, 100vw"
+            loading="eager"
+            decoding="async"
+          />
+        </div>
+      )
+    }
 
     <div class="talk__actions">
       <a
@@ -74,18 +93,21 @@ const transitionName = `thumb-talk-${slug}`;
         target="_blank"
         rel="noopener noreferrer"
       >
-        {strings.talk.viewSlides} <span aria-hidden="true">↗</span>
+        {strings.talk.viewSlides}
+        <span aria-hidden="true">↗</span>
       </a>
-      {videoUrl && (
-        <a
-          href={videoUrl}
-          class="talk__button"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {strings.talk.watchRecording} <span aria-hidden="true">↗</span>
-        </a>
-      )}
+      {
+        videoUrl && (
+          <a
+            href={videoUrl}
+            class="talk__button"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {strings.talk.watchRecording} <span aria-hidden="true">↗</span>
+          </a>
+        )
+      }
     </div>
 
     <div class="talk__body">
@@ -146,7 +168,9 @@ const transitionName = `thumb-talk-${slug}`;
     color: var(--color-fg);
     background: var(--color-surface-raised);
     text-decoration: none;
-    transition: border-color 120ms ease, background 120ms ease;
+    transition:
+      border-color 120ms ease,
+      background 120ms ease;
   }
 
   .talk__button:hover {

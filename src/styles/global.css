@@ -30,16 +30,18 @@
 @theme {
   /* Latin variable font — loaded from /src/assets/fonts/. */
   --font-display:
-    "Fraunces Variable", "Fraunces", ui-serif, Georgia, Cambria, "Times New Roman",
-    "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif;
+    "Fraunces Variable", "Fraunces", ui-serif, Georgia, Cambria,
+    "Times New Roman", "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP",
+    serif;
   --font-body:
-    "Source Serif 4 Variable", "Source Serif 4", ui-serif, Georgia, "Hiragino Mincho ProN",
-    "Yu Mincho", "Noto Serif JP", serif;
+    "Source Serif 4 Variable", "Source Serif 4", ui-serif, Georgia,
+    "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif;
   --font-sans:
-    system-ui, -apple-system, "Segoe UI", Roboto, "Hiragino Sans", "Yu Gothic UI", Meiryo,
-    "Noto Sans JP", sans-serif;
+    system-ui, -apple-system, "Segoe UI", Roboto, "Hiragino Sans",
+    "Yu Gothic UI", Meiryo, "Noto Sans JP", sans-serif;
   --font-mono:
-    ui-monospace, "SF Mono", "Cascadia Code", "JetBrains Mono", Consolas, Menlo, monospace;
+    ui-monospace, "SF Mono", "Cascadia Code", "JetBrains Mono", Consolas, Menlo,
+    monospace;
 
   /* Editorial warm neutral palette. */
   --color-bg: oklch(98.4% 0.015 85);
@@ -105,7 +107,11 @@ html[lang="ja"] {
 
 a {
   color: inherit;
-  text-decoration-color: color-mix(in oklab, var(--color-accent) 60%, transparent);
+  text-decoration-color: color-mix(
+    in oklab,
+    var(--color-accent) 60%,
+    transparent
+  );
   text-underline-offset: 0.2em;
 }
 
