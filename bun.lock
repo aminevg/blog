@@ -12,7 +12,6 @@
         "@vercel/og": "^0.11.1",
         "astro": "^6.1.8",
         "astro-expressive-code": "^0.41.7",
-        "astro-og-canvas": "^0.11.1",
         "tailwindcss": "^4.2.2",
       },
       "devDependencies": {
@@ -732,8 +731,6 @@
 
     "@vscode/l10n": ["@vscode/l10n@0.0.18", "", {}, ""],
 
-    "@webgpu/types": ["@webgpu/types@0.1.21", "", {}, ""],
-
     "abbrev": ["abbrev@2.0.0", "", {}, ""],
 
     "accepts": ["accepts@2.0.0", "", { "dependencies": { "mime-types": "^3.0.0", "negotiator": "^1.0.0" } }, ""],
@@ -794,8 +791,6 @@
 
     "astro-expressive-code": ["astro-expressive-code@0.41.7", "", { "dependencies": { "rehype-expressive-code": "^0.41.7" }, "peerDependencies": { "astro": "^4.0.0-beta || ^5.0.0-beta || ^3.3.0 || ^6.0.0-beta" } }, ""],
 
-    "astro-og-canvas": ["astro-og-canvas@0.11.1", "", { "dependencies": { "canvaskit-wasm": "^0.41.1", "deterministic-object-hash": "^2.0.2", "entities": "^8.0.0" }, "peerDependencies": { "astro": "^5.0.0 || ^6.0.0-alpha" } }, ""],
-
     "astrojs-compiler-sync": ["astrojs-compiler-sync@1.1.1", "", { "dependencies": { "synckit": "^0.11.0" }, "peerDependencies": { "@astrojs/compiler": ">=0.27.0" } }, ""],
 
     "async": ["async@2.6.4", "", { "dependencies": { "lodash": "^4.17.14" } }, ""],
@@ -809,8 +804,6 @@
     "bail": ["bail@2.0.2", "", {}, ""],
 
     "balanced-match": ["balanced-match@4.0.4", "", {}, ""],
-
-    "base-64": ["base-64@1.0.0", "", {}, ""],
 
     "base64-js": ["base64-js@0.0.8", "", {}, "sha512-3XSA2cR/h/73EzlXXdU6YNycmYI7+kicTxks4eJg2g39biHR84slg2+des+p7iHYhbRg/udIS4TD53WabcOUkw=="],
 
@@ -853,8 +846,6 @@
     "camelcase-keys": ["camelcase-keys@8.0.2", "", { "dependencies": { "camelcase": "^7.0.0", "map-obj": "^4.3.0", "quick-lru": "^6.1.1", "type-fest": "^2.13.0" } }, ""],
 
     "camelize": ["camelize@1.0.1", "", {}, "sha512-dU+Tx2fsypxTgtLoE36npi3UqcjSSMNYfkqgmoEhtZrraP5VWq0K7FkWVTYa8eMPtnU/G2txVsfdCJTn9uzpuQ=="],
-
-    "canvaskit-wasm": ["canvaskit-wasm@0.41.1", "", { "dependencies": { "@webgpu/types": "0.1.21" } }, ""],
 
     "ccount": ["ccount@2.0.1", "", {}, ""],
 
@@ -1010,8 +1001,6 @@
 
     "detect-libc": ["detect-libc@2.1.2", "", {}, ""],
 
-    "deterministic-object-hash": ["deterministic-object-hash@2.0.2", "", { "dependencies": { "base-64": "^1.0.0" } }, ""],
-
     "devalue": ["devalue@5.7.1", "", {}, ""],
 
     "devlop": ["devlop@1.1.0", "", { "dependencies": { "dequal": "^2.0.0" } }, ""],
@@ -1058,7 +1047,7 @@
 
     "enhanced-resolve": ["enhanced-resolve@5.20.1", "", { "dependencies": { "graceful-fs": "^4.2.4", "tapable": "^2.3.0" } }, ""],
 
-    "entities": ["entities@8.0.0", "", {}, ""],
+    "entities": ["entities@7.0.1", "", {}, ""],
 
     "env-paths": ["env-paths@4.0.0", "", { "dependencies": { "is-safe-filename": "^0.1.0" } }, ""],
 
@@ -2637,8 +2626,6 @@
     "astro/zod": ["zod@4.3.6", "", {}, ""],
 
     "astro-eslint-parser/@astrojs/compiler": ["@astrojs/compiler@3.0.1", "", {}, ""],
-
-    "astro-eslint-parser/entities": ["entities@7.0.1", "", {}, ""],
 
     "astro-eslint-parser/eslint-scope": ["eslint-scope@8.4.0", "", { "dependencies": { "esrecurse": "^4.3.0", "estraverse": "^5.2.0" } }, ""],
 
