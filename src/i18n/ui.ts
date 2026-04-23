@@ -26,14 +26,13 @@ export const UI = {
       published: "Published",
       updated: "Updated",
       firstPublishedOn: "First published on",
-      readingAlsoIn: "Also in 日本語",
     },
     talk: {
       watchRecording: "Watch recording",
     },
     languageSwitcher: {
       toEnglish: "English",
-      toJapanese: "日本語版",
+      toJapanese: "日本語",
       onlyAvailableInEnglish: "Only in English",
       onlyAvailableInJapanese: "日本語のみ",
     },
@@ -71,14 +70,13 @@ export const UI = {
       published: "公開",
       updated: "更新",
       firstPublishedOn: "初出：",
-      readingAlsoIn: "English version available",
     },
     talk: {
       watchRecording: "録画を見る",
     },
     languageSwitcher: {
       toEnglish: "English",
-      toJapanese: "日本語版",
+      toJapanese: "日本語",
       onlyAvailableInEnglish: "Only in English",
       onlyAvailableInJapanese: "日本語のみ",
     },

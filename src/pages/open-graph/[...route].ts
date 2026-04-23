@@ -1,104 +1,309 @@
-import { OGImageRoute } from "astro-og-canvas";
+import type { APIRoute, APIContext } from "astro";
+import { ImageResponse } from "@vercel/og";
+import { fontData } from "astro:assets";
+import { outDir } from "astro:config/server";
 import { getCollection } from "astro:content";
+import { readFile } from "node:fs/promises";
 import { postSlug } from "~/lib/content";
-import { SITE } from "~/config/site";
+import { SITE, type Locale } from "~/config/site";
+
+// Tufte OG layout — cream paper, 8px oxblood left border, typographic only.
+// Four text blocks top-to-bottom: kicker · title · lede · brand line.
 
 type Kind = "post" | "blog" | "talks" | "about" | "home";
 
-type PageData = {
+interface PageData {
   title: string;
   description: string;
   kind: Kind;
-  locale: "en" | "ja";
-};
-
-const pages: Record<string, PageData> = {};
-
-const posts = await getCollection("posts");
-for (const entry of posts) {
-  const key = `${entry.data.lang}/blog/${postSlug(entry)}`;
-  pages[key] = {
-    title: entry.data.title,
-    description: entry.data.description,
-    kind: "post",
-    locale: entry.data.lang,
-  };
+  locale: Locale;
+  pubDate?: Date;
 }
 
-const aboutPages = await getCollection("pages");
-for (const entry of aboutPages) {
-  pages[`${entry.data.lang}/about`] = {
-    title: entry.data.title,
-    description: entry.data.description,
-    kind: "about",
-    locale: entry.data.lang,
-  };
+const BG = "#fdf9f0";
+const FG = "#161311";
+const FG_MUTED = "#5a524a";
+const FG_SUBTLE = "#8f857b";
+const ACCENT = "#7a1a1a";
+
+const WIDTH = 1200;
+const HEIGHT = 630;
+const PADDING = 80;
+const BORDER = 8;
+
+type Weight = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
+type Style = "normal" | "italic";
+
+// Astro's fontData maps CSS variables to font-face metadata, including URLs
+// Astro serves (in dev) or emits under `outDir` (in build). We pick the TTF
+// variant because satori (inside @vercel/og) can't parse WOFF2 or variable
+// fonts. `astro.config.mjs` emits both woff2 (for the site) and ttf (for us).
+async function loadFontBinary(
+  url: string,
+  context: APIContext,
+): Promise<ArrayBuffer | Buffer> {
+  if (import.meta.env.DEV) {
+    const res = await fetch(new URL(url, context.url.origin));
+    if (!res.ok) throw new Error(`Font ${url}: ${res.status}`);
+    return res.arrayBuffer();
+  }
+  return readFile(new URL(`.${url}`, outDir));
 }
 
-for (const locale of SITE.locales) {
-  pages[`${locale}/home`] = {
-    title: SITE.title,
-    description: SITE.subtitle[locale],
-    kind: "home",
-    locale,
+async function loadFonts(context: APIContext) {
+  const family = async (cssVariable: string, name: string) => {
+    const entries = fontData[cssVariable as keyof typeof fontData] ?? [];
+    return Promise.all(
+      entries.map(async (entry) => {
+        const ttfSrc =
+          entry.src.find((s) => "url" in s && s.format === "truetype") ??
+          entry.src.find((s) => "url" in s);
+        if (!ttfSrc || !("url" in ttfSrc)) {
+          throw new Error(`No usable font source for ${name} ${entry.weight}`);
+        }
+        return {
+          name,
+          data: await loadFontBinary(ttfSrc.url, context),
+          weight: Number(entry.weight) as Weight,
+          style: entry.style as Style,
+        };
+      }),
+    );
   };
-  pages[`${locale}/blog`] = {
-    title: locale === "en" ? "Blog" : "ブログ",
-    description: SITE.description[locale],
-    kind: "blog",
-    locale,
-  };
-  pages[`${locale}/talks`] = {
-    title: locale === "en" ? "Talks" : "登壇",
-    description: SITE.description[locale],
-    kind: "talks",
-    locale,
-  };
+  const [serif, sans, jp] = await Promise.all([
+    family("--font-serif-web", "EB Garamond"),
+    family("--font-sans-web", "IBM Plex Sans"),
+    family("--font-serif-jp", "Noto Serif JP"),
+  ]);
+  return [...serif, ...sans, ...jp];
 }
 
-// Light-mode Tufte palette only. No dark alternate.
-const BG: [number, number, number] = [253, 249, 240];
-const FG: [number, number, number] = [22, 19, 17];
-const FG_MUTED: [number, number, number] = [90, 82, 74];
-const ACCENT: [number, number, number] = [122, 26, 26];
+function monthLabel(date: Date, locale: Locale): string {
+  if (locale === "ja") {
+    return `${date.getUTCFullYear()}年${date.getUTCMonth() + 1}月${date.getUTCDate()}日`;
+  }
+  const months = [
+    "JAN",
+    "FEB",
+    "MAR",
+    "APR",
+    "MAY",
+    "JUN",
+    "JUL",
+    "AUG",
+    "SEP",
+    "OCT",
+    "NOV",
+    "DEC",
+  ];
+  return `${months[date.getUTCMonth()]} ${date.getUTCDate()}, ${date.getUTCFullYear()}`;
+}
 
-const SERIF_FAMILIES = [
-  "EB Garamond",
-  "Hiragino Mincho ProN",
-  "Yu Mincho",
-  "Noto Serif JP",
-  "Georgia",
-  "serif",
-];
+function kickerFor(page: PageData): string | null {
+  switch (page.kind) {
+    case "post":
+      return page.pubDate
+        ? `${monthLabel(page.pubDate, page.locale)}  ·  ${page.locale === "ja" ? "記事" : "ESSAYS"}`
+        : page.locale === "ja"
+          ? "記事"
+          : "ESSAYS";
+    case "blog":
+      return page.locale === "ja" ? "ブログ" : "BLOG";
+    case "talks":
+      return page.locale === "ja" ? "登壇" : "TALKS";
+    case "about":
+      return page.locale === "ja" ? "プロフィール" : "COLOPHON";
+    case "home":
+      return null;
+  }
+}
 
-export const { getStaticPaths, GET } = await OGImageRoute({
-  param: "route",
-  pages,
-  getImageOptions: (_path, page: PageData) => ({
-    title: page.title,
-    description: page.description,
-    bgGradient: [BG, BG],
-    border: {
-      color: ACCENT,
-      width: 8,
-      side: "inline-start",
-    },
-    padding: 80,
-    font: {
-      title: {
+// Satori (via @vercel/og) accepts React-shaped element trees. We build plain
+// objects so no React dep is needed.
+type StyleObj = Record<string, string | number>;
+type Child = Node | string;
+interface Node {
+  type: string;
+  props: { style?: StyleObj; children?: Child | Child[] };
+}
+const el = (
+  type: string,
+  style: StyleObj,
+  children?: Child | Child[],
+): Node => ({ type, props: { style, children } });
+
+function template(page: PageData): Node {
+  const kicker = kickerFor(page);
+  const brand = `${SITE.author.name.toUpperCase()}  ·  BLOG.AMINEVG.DEV`;
+  const isHome = page.kind === "home";
+
+  const top: Child[] = [];
+  if (kicker) {
+    top.push(
+      el(
+        "div",
+        {
+          display: "flex",
+          fontFamily: "IBM Plex Sans",
+          fontWeight: 500,
+          fontSize: 28,
+          color: FG_SUBTLE,
+          letterSpacing: "0.14em",
+          textTransform: "uppercase",
+          marginBottom: 48,
+        },
+        kicker,
+      ),
+    );
+  }
+  top.push(
+    el(
+      "div",
+      {
+        display: "flex",
+        fontFamily: "EB Garamond",
+        fontStyle: "italic",
+        fontWeight: 500,
+        fontSize: isHome ? 96 : 84,
         color: FG,
-        size: 80,
         lineHeight: 1,
-        weight: "Medium",
-        families: SERIF_FAMILIES,
+        letterSpacing: "-0.01em",
+        marginBottom: 32,
       },
-      description: {
-        color: FG_MUTED,
-        size: 28,
-        lineHeight: 1.4,
-        weight: "Normal",
-        families: SERIF_FAMILIES,
+      page.title,
+    ),
+  );
+  if (page.description) {
+    top.push(
+      el(
+        "div",
+        {
+          display: "flex",
+          fontFamily: "EB Garamond",
+          fontWeight: 400,
+          fontSize: 32,
+          color: FG_MUTED,
+          lineHeight: 1.4,
+          maxWidth: 900,
+        },
+        page.description,
+      ),
+    );
+  }
+
+  return el(
+    "div",
+    {
+      display: "flex",
+      width: WIDTH,
+      height: HEIGHT,
+      background: BG,
+    },
+    [
+      el("div", {
+        display: "flex",
+        width: BORDER,
+        height: HEIGHT,
+        background: ACCENT,
+      }),
+      el(
+        "div",
+        {
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          flex: 1,
+          padding: PADDING,
+          height: HEIGHT,
+        },
+        [
+          el("div", { display: "flex", flexDirection: "column" }, top),
+          el(
+            "div",
+            {
+              display: "flex",
+              fontFamily: "IBM Plex Sans",
+              fontWeight: 500,
+              fontSize: 22,
+              color: FG_SUBTLE,
+              letterSpacing: "0.14em",
+            },
+            brand,
+          ),
+        ],
+      ),
+    ],
+  );
+}
+
+async function collectPages(): Promise<Record<string, PageData>> {
+  const pages: Record<string, PageData> = {};
+
+  const posts = await getCollection("posts");
+  for (const entry of posts) {
+    pages[`${entry.data.lang}/blog/${postSlug(entry)}`] = {
+      title: entry.data.title,
+      description: entry.data.description,
+      kind: "post",
+      locale: entry.data.lang,
+      pubDate: entry.data.pubDate,
+    };
+  }
+
+  const aboutPages = await getCollection("pages");
+  for (const entry of aboutPages) {
+    pages[`${entry.data.lang}/about`] = {
+      title: entry.data.title,
+      description: entry.data.description,
+      kind: "about",
+      locale: entry.data.lang,
+    };
+  }
+
+  for (const locale of SITE.locales) {
+    pages[`${locale}/home`] = {
+      title: SITE.title,
+      description: SITE.subtitle[locale],
+      kind: "home",
+      locale,
+    };
+    pages[`${locale}/blog`] = {
+      title: locale === "ja" ? "ブログ" : "Blog",
+      description: SITE.description[locale],
+      kind: "blog",
+      locale,
+    };
+    pages[`${locale}/talks`] = {
+      title: locale === "ja" ? "登壇" : "Talks",
+      description: SITE.description[locale],
+      kind: "talks",
+      locale,
+    };
+  }
+
+  return pages;
+}
+
+export async function getStaticPaths() {
+  const pages = await collectPages();
+  return Object.entries(pages).map(([route, data]) => ({
+    params: { route: `${route}.png` },
+    props: data,
+  }));
+}
+
+export const GET: APIRoute = async (context) => {
+  const fonts = await loadFonts(context);
+  return new ImageResponse(
+    template(context.props as PageData) as unknown as never,
+    {
+      width: WIDTH,
+      height: HEIGHT,
+      fonts,
+      headers: {
+        "Content-Type": "image/png",
+        "Cache-Control": "public, max-age=31536000, immutable",
       },
     },
-  }),
-});
+  );
+};

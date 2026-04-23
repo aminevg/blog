@@ -6,7 +6,9 @@ import { localeHome, localeBlog, localeTalks, localeAbout } from "~/lib/paths";
 
 export interface Props {
   locale: Locale;
-  // URL of the equivalent page in the other locale, or null if absent.
+  // URL of the equivalent page in the other locale, or null if no direct
+  // translation exists — in which case the switcher falls back to the other
+  // locale's home so the link is always clickable.
   otherLocaleHref: string | null;
 }
 
@@ -26,6 +28,7 @@ const langLabel =
   target === "en"
     ? strings.languageSwitcher.toEnglish
     : strings.languageSwitcher.toJapanese;
+const switcherHref = otherLocaleHref ?? localeHome(target);
 ---
 
 <header class="masthead">
@@ -54,26 +57,15 @@ const langLabel =
       ))
     }
     <span class="masthead__sep" aria-hidden="true">·</span>
-    {
-      otherLocaleHref ? (
-        <a
-          class="masthead__lang"
-          href={otherLocaleHref}
-          hreflang={target}
-          lang={target}
-          rel="alternate"
-        >
-          {langLabel}
-        </a>
-      ) : (
-        <span
-          class="masthead__lang masthead__lang--disabled"
-          aria-disabled="true"
-        >
-          {langLabel}
-        </span>
-      )
-    }
+    <a
+      class="masthead__lang"
+      href={switcherHref}
+      hreflang={target}
+      lang={target}
+      rel="alternate"
+    >
+      {langLabel}
+    </a>
   </nav>
 </header>
 
@@ -153,10 +145,5 @@ const langLabel =
     letter-spacing: 0;
     font-size: 0.95rem;
     font-weight: 400;
-  }
-
-  .masthead__lang--disabled {
-    color: var(--color-fg-subtle);
-    cursor: not-allowed;
   }
 </style>

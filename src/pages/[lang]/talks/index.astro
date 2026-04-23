@@ -1,5 +1,6 @@
 ---
 import type { GetStaticPaths } from "astro";
+import { render } from "astro:content";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import FormattedDate from "~/components/ui/FormattedDate.astro";
 import { SITE } from "~/config/site";
@@ -18,14 +19,12 @@ const otherLocale: Locale = locale === "en" ? "ja" : "en";
 const strings = t(locale);
 
 const talks = await getTalks(locale);
+// Resolve each entry's markdown body into a <Content /> component at build
+// time so abstracts can use inline markdown (links, emphasis, inline code).
+const talksWithContent = await Promise.all(
+  talks.map(async (entry) => ({ entry, ...(await render(entry)) })),
+);
 const otherHref = localeTalks(otherLocale);
-
-function paragraphs(text: string): string[] {
-  return text
-    .split(/\n{2,}/)
-    .map((p) => p.replace(/\s+/g, " ").trim())
-    .filter(Boolean);
-}
 ---
 
 <BaseLayout
@@ -40,24 +39,16 @@ function paragraphs(text: string): string[] {
     <h2 class="listing__title">{strings.listings.talksTitle}</h2>
     <ol class="entries">
       {
-        talks.map((entry) => {
-          const {
-            title,
-            abstract,
-            event,
-            eventDate,
-            venue,
-            slidesUrl,
-            videoUrl,
-          } = entry.data;
+        talksWithContent.map(({ entry, Content }) => {
+          const { title, event, eventDate, venue, slidesUrl, videoUrl } =
+            entry.data;
           return (
             <li class="entry">
               <a
                 href={slidesUrl}
-                class="entry__link"
+                class="entry__header"
                 target="_blank"
                 rel="noopener"
-                aria-label={title}
               >
                 <p class="entry__meta">
                   <span>{event}</span>
@@ -73,12 +64,10 @@ function paragraphs(text: string): string[] {
                 <h3 class="entry__title">
                   <span>{title}</span>
                 </h3>
-                <div class="entry__abstract">
-                  {paragraphs(abstract).map((p) => (
-                    <p>{p}</p>
-                  ))}
-                </div>
               </a>
+              <div class="entry__abstract prose">
+                <Content />
+              </div>
               {videoUrl && (
                 <p class="entry__recording">
                   <a href={videoUrl} target="_blank" rel="noopener">
@@ -122,7 +111,7 @@ function paragraphs(text: string): string[] {
     border-bottom: none;
   }
 
-  .entry__link {
+  .entry__header {
     display: block;
     text-decoration: none;
     color: inherit;
@@ -148,7 +137,7 @@ function paragraphs(text: string): string[] {
     color: var(--color-fg);
   }
 
-  .entry__link:hover .entry__title span {
+  .entry__header:hover .entry__title span {
     background-image: linear-gradient(
       var(--color-highlight),
       var(--color-highlight)

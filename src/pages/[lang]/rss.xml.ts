@@ -26,7 +26,7 @@ export const GET: APIRoute = async ({ params, site }) => {
     })),
     ...talks.map((entry) => ({
       title: `[Talk] ${entry.data.title}`,
-      description: entry.data.abstract,
+      description: entry.data.description,
       pubDate: entry.data.eventDate,
       link: entry.data.slidesUrl,
       categories: ["talk"],
@@ -38,6 +38,6 @@ export const GET: APIRoute = async ({ params, site }) => {
     description: SITE.description[locale],
     site: site ?? "https://blog.aminevg.dev",
     items,
-    customData: `<language>${locale === "ja" ? "ja" : "en"}</language>`,
+    customData: `<language>${locale}</language>`,
   });
 };

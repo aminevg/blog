@@ -27,7 +27,8 @@ const talks = defineCollection({
   }),
   schema: z.object({
     title: z.string(),
-    abstract: z.string(),
+    // Short one-line summary used in RSS, llms.txt, OG, meta description.
+    description: z.string().max(200),
     event: z.string(),
     eventDate: z.coerce.date(),
     slidesUrl: z.url(),

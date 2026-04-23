@@ -34,13 +34,8 @@ export const GET: APIRoute = async ({ params, site }) => {
   lines.push(talksHeading);
   lines.push("");
   for (const entry of talks) {
-    const firstLine =
-      entry.data.abstract
-        .split(/\n{2,}/)[0]
-        ?.replace(/\s+/g, " ")
-        .trim() ?? "";
     lines.push(
-      `- [[Talk] ${entry.data.title}](${entry.data.slidesUrl}): ${firstLine}`,
+      `- [[Talk] ${entry.data.title}](${entry.data.slidesUrl}): ${entry.data.description}`,
     );
   }
   lines.push("");

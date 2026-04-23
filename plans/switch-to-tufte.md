@@ -48,7 +48,7 @@ Not in scope: renaming routes (URLs stay `/blog/…`, `/about/…`); adding tags
 
 - `theme.light`, `theme.dark`, `theme.system`, `theme.toggleLabel` — no toggle
 - `talk.viewSlides`, `talk.watchRecording`, `talk.atEvent`, `talk.on` — repurpose or remove depending on §10.4 final copy
-- `post.readingAlsoIn` — kept, used in post detail footer (§10.3)
+- `post.readingAlsoIn` — dropped (translation is reached via the masthead language switcher; no "Also in …" row in the post footer)
 
 ## 3. Typography & fonts
 
@@ -219,7 +219,7 @@ Replaces the current `Header.astro` entirely. Created as `src/components/layout/
             ·
           </span>
           <a href={otherLocaleHref} class="masthead__lang">
-            {locale === "en" ? "日本語版" : "English"}
+            {locale === "en" ? "日本語" : "English"}
           </a>
         </>
       )
@@ -412,14 +412,14 @@ All existing `src/content/posts/*/index.mdx` get the `heroImage:` frontmatter li
 
 ### 9.2 Talks
 
-Flattened to frontmatter-only `.md` with no body. Schema:
+Flattened to a `.md` file with a short `description` in frontmatter and the multi-paragraph abstract in the body (so inline markdown — links, emphasis, inline code — renders through Astro's content pipeline on the talks listing). Schema:
 
 ```ts
 const talks = defineCollection({
   loader: glob({ pattern: "**/index.md", base: "./src/content/talks" }),
   schema: z.object({
     title: z.string(),
-    abstract: z.string(), // was `description: z.string().max(200)` — renamed, cap lifted
+    description: z.string().max(200), // short summary for RSS, llms.txt, OG, meta
     event: z.string(),
     eventDate: z.coerce.date(),
     slidesUrl: z.url(),
@@ -430,18 +430,12 @@ const talks = defineCollection({
 });
 ```
 
-Each talk file is `src/content/talks/<locale>/<slug>/index.md` with frontmatter and empty body (just the trailing `---`). Example:
+Each talk file is `src/content/talks/<locale>/<slug>/index.md`. Example:
 
 ```yaml
 ---
 title: "Platform engineering in 2026"
-abstract: |
-  What a platform team actually owns — and what it should refuse to own —
-  after two years of watching the pattern settle.
-
-  Notes from two years of watching platform teams coalesce at mid-sized
-  companies. Where the interface lands. Which decisions to delegate.
-  And how to avoid the "gold-plated internal framework" trap.
+description: "What a platform team actually owns — and what it should refuse to own — after two years of watching the pattern settle."
 event: "SRE Next"
 eventDate: 2026-02-14
 venue: "Tokyo"
@@ -449,11 +443,14 @@ slidesUrl: "https://speakerdeck.com/example/platform-engineering-2026"
 videoUrl: "https://www.youtube.com/watch?v=example"
 lang: en
 ---
+What a platform team actually owns — and what it should refuse to own — after two years of watching the pattern settle.
+
+Notes from two years of watching platform teams coalesce at mid-sized companies. Where the interface lands. Which decisions to delegate. And how to avoid the "gold-plated internal framework" trap.
 ```
 
 Migration:
 
-- Rename existing `.mdx` → `.md`, move prose body content into the `abstract` field, strip `thumbnail` and `description` frontmatter (if present).
+- Rename existing `.mdx` → `.md`, keep prose body as the abstract, extract a short one-line summary into the `description` frontmatter, strip `thumbnail` (if present).
 - Delete `src/content/talks/*/thumbnail.*`, `src/content/talks/_fallback.jpg`.
 - Delete `src/content/talks-loader.ts` and switch to the plain `glob()` loader.
 - Update `TalkEntry` type in `src/lib/content.ts` to match the new schema.
@@ -529,7 +526,6 @@ that wasn't supposed to have one.
 ────                                        ← thin rule separator
 
 Updated Mar 14, 2026                        ← if updatedDate set
-Also in 日本語                               ← if JA translation exists
 First published on Zenn ↗                   ← if canonicalUrl set
 
 [Footer]
@@ -538,7 +534,7 @@ First published on Zenn ↗                   ← if canonicalUrl set
 - Back-link: small-caps IBM Plex Sans, muted color, hover to accent. `← Essays` (label unchanged to match Blog/Talks/About nav — should probably read `← Blog` for label consistency; confirm at implementation).
 - Date kicker above title.
 - Description rendered as lede between title and body, muted body serif, max 44em width. Also emitted as `<meta name="description">` and OG description.
-- `updatedDate`, "Also in 日本語", "First published on Zenn" live in the article footer, not the header. Each is optional, conditional on frontmatter.
+- `updatedDate` and "First published on Zenn" live in the article footer, not the header. Each is optional, conditional on frontmatter. Translations are reached through the masthead language switcher (which falls back to the other-locale home when a direct translation is absent), so no "Also in …" row appears in the footer.
 - `canonicalUrl`, when set, also emits `<link rel="canonical">` in head (existing behavior).
 - No next/prev navigation, no related posts, no TOC, no byline.
 
@@ -551,7 +547,7 @@ List of all talks for the current language, newest first. There is no talk detai
   <a href="{slidesUrl}" target="_blank" rel="noopener" aria-label="{title}">
     <p class="talk-entry__meta">SRE NEXT · TOKYO · FEB 14, 2026</p>
     <h3 class="talk-entry__title">Platform engineering in 2026</h3>
-    <div class="talk-entry__abstract">{abstract as rendered markdown}</div>
+    <div class="talk-entry__abstract"><content /></div>
     <p class="talk-entry__action">View slides ↗</p>
   </a>
   {videoUrl && (
@@ -858,7 +854,7 @@ Also: `public/og-default.png` can stay as a fallback, but it is rarely hit if ev
 ### 14.1 RSS — `[lang]/rss.xml.ts`
 
 - Posts: `<link>` to internal URL (`https://blog.aminevg.dev/<lang>/blog/<slug>/`), same as today.
-- Talks: `<link>` to `slidesUrl` (external). `<description>` is the talk `abstract`. `<title>` prefixed with a small marker: `"[Talk] Platform engineering in 2026"` to distinguish in aggregator feeds.
+- Talks: `<link>` to `slidesUrl` (external). `<description>` is the talk `description` (the short one-liner in frontmatter). `<title>` prefixed with a small marker: `"[Talk] Platform engineering in 2026"` to distinguish in aggregator feeds.
 - Order: mixed, sorted by date (`pubDate` for posts, `eventDate` for talks).
 
 ### 14.2 llms.txt — `[lang]/llms.txt.ts`
@@ -895,7 +891,7 @@ Keep:
 - `nav.*` (home/blog/talks/about — labels unchanged)
 - `home.*` — may need minor copy tweak for section titles (no `§ 01` numbering)
 - `listings.*`
-- `post.*` — `published`, `updated`, `readingAlsoIn` all stay
+- `post.*` — `published`, `updated`, `firstPublishedOn`, `backToBlog` stay (`readingAlsoIn` removed)
 - `talk.*` — prune unused fields; keep `viewSlides`, `watchRecording`, `atEvent`, `on` if used on the new flattened listing
 - `languageSwitcher.*`
 - `feed.rss`
@@ -929,7 +925,7 @@ One PR per phase. Each phase ends in a working, visually-verifiable state — no
 
 - Rewrite `PostCard.astro` as Astro-starter-style whole-card `<a aria-label={title}>`.
 - Delete `TalkCard.astro`; inline new talk-entry markup in `[lang]/talks/index.astro`.
-- Migrate talks content from `.mdx` + MDX bodies to `.md` + `abstract` frontmatter; rename `description` → `abstract`; drop `thumbnail`.
+- Migrate talks content from `.mdx` + MDX bodies to `.md` + markdown body; add a short `description` field; drop `thumbnail`.
 - Delete `talks-loader.ts`, `_fallback.jpg`, all `thumbnail.*` files; revert talks collection to plain `glob()` loader.
 - Delete `src/pages/[lang]/talks/[...slug].astro`.
 - Update talks schema in `content.config.ts` and `TalkEntry` type in `lib/content.ts`.

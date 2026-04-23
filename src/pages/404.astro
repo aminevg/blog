@@ -12,9 +12,9 @@ const ja = t("ja").notFound;
   description={en.body}
   alternateUrl={null}
 >
-  <section class="not-found" lang="en">
+  <section class="not-found" lang="en" aria-labelledby="not-found-title-en">
     <p class="not-found__kicker">{en.kicker}</p>
-    <h1 class="not-found__title">{en.title}</h1>
+    <h1 id="not-found-title-en" class="not-found__title">{en.title}</h1>
     <p class="not-found__body">
       <em>{en.body}</em>
     </p>
@@ -25,9 +25,9 @@ const ja = t("ja").notFound;
 
   <hr class="not-found__rule" />
 
-  <section class="not-found" lang="ja">
+  <section class="not-found" lang="ja" aria-labelledby="not-found-title-ja">
     <p class="not-found__kicker">{ja.kicker}</p>
-    <h1 class="not-found__title">{ja.title}</h1>
+    <h2 id="not-found-title-ja" class="not-found__title">{ja.title}</h2>
     <p class="not-found__body">
       <em>{ja.body}</em>
     </p>

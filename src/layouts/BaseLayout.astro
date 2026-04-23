@@ -18,9 +18,6 @@ export interface Props {
     publishedTime?: Date;
     modifiedTime?: Date;
   };
-  // When true, omits the masthead (used by the bilingual 404 which renders
-  // its own header variants).
-  bare?: boolean;
 }
 
 const {
@@ -32,7 +29,6 @@ const {
   alternateUrl = null,
   xDefaultUrl,
   article,
-  bare = false,
 } = Astro.props;
 ---
 
@@ -55,26 +51,46 @@ const {
   <body>
     <a href="#main" class="skip-link">Skip to content</a>
     <div class="page">
-      {!bare && <Masthead locale={locale} otherLocaleHref={alternateUrl} />}
+      <Masthead locale={locale} otherLocaleHref={alternateUrl} />
       <main id="main" class="page__main">
         <slot />
       </main>
       <Footer locale={locale} />
     </div>
     <script is:inline>
-      // Sidenote toggle. On narrow viewports, clicking the ref button toggles
-      // the .is-open class on the surrounding .sidenote. On wide viewports,
-      // the body is always visible (via CSS) and the button is inert.
+      // Sidenote sync. On wide viewports (>= 62rem), the body is always
+      // visible via CSS and the button is inert; reflect that in
+      // aria-expanded so AT users aren't told "collapsed" while the note is
+      // on screen. On narrow viewports, clicking the button toggles the
+      // .is-open class on the surrounding .sidenote.
       (() => {
+        const mql = window.matchMedia("(min-width: 62rem)");
+        const syncAria = () => {
+          const wide = mql.matches;
+          document.querySelectorAll(".sidenote__ref").forEach((btn) => {
+            if (wide) {
+              btn.setAttribute("aria-expanded", "true");
+              return;
+            }
+            const sn = btn.closest(".sidenote");
+            const opened = sn?.classList.contains("is-open") ?? false;
+            btn.setAttribute("aria-expanded", opened ? "true" : "false");
+          });
+        };
         const toggle = (e) => {
+          if (mql.matches) return;
           const btn = e.target.closest(".sidenote__ref");
           if (!btn) return;
           const sn = btn.closest(".sidenote");
           if (!sn) return;
           sn.classList.toggle("is-open");
-          const opened = sn.classList.contains("is-open");
-          btn.setAttribute("aria-expanded", opened ? "true" : "false");
+          btn.setAttribute(
+            "aria-expanded",
+            sn.classList.contains("is-open") ? "true" : "false",
+          );
         };
+        syncAria();
+        mql.addEventListener("change", syncAria);
         document.addEventListener("click", toggle);
       })();
     </script>

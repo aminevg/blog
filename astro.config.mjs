@@ -9,7 +9,6 @@ import { expressiveCodeOptions } from "./src/config/expressive-code.ts";
 // https://astro.build/config
 export default defineConfig({
   site: "https://blog.aminevg.dev",
-  trailingSlash: "always",
   build: {
     format: "directory",
   },
@@ -24,14 +23,19 @@ export default defineConfig({
   image: {
     remotePatterns: [],
   },
+  // Fontsource serves single-weight static files; Google's provider returns
+  // variable-font WOFF2, which satori (inside @vercel/og) can't parse. Both
+  // woff2 (for the site) and ttf (for OG rendering) are emitted so the OG
+  // route can pick the TTF via Astro's `fontData` API.
   fonts: [
     {
-      provider: fontProviders.google(),
+      provider: fontProviders.fontsource(),
       name: "EB Garamond",
       cssVariable: "--font-serif-web",
       weights: [400, 500],
       styles: ["normal", "italic"],
       subsets: ["latin", "latin-ext"],
+      formats: ["woff2", "ttf"],
       fallbacks: [
         "Hiragino Mincho ProN",
         "Yu Mincho",
@@ -41,12 +45,13 @@ export default defineConfig({
       ],
     },
     {
-      provider: fontProviders.google(),
+      provider: fontProviders.fontsource(),
       name: "IBM Plex Sans",
       cssVariable: "--font-sans-web",
       weights: [500],
       styles: ["normal"],
       subsets: ["latin", "latin-ext"],
+      formats: ["woff2", "ttf"],
       fallbacks: [
         "Hiragino Sans",
         "Yu Gothic",
@@ -56,12 +61,13 @@ export default defineConfig({
       ],
     },
     {
-      provider: fontProviders.google(),
+      provider: fontProviders.fontsource(),
       name: "Noto Serif JP",
       cssVariable: "--font-serif-jp",
       weights: [400],
       styles: ["normal"],
       subsets: ["japanese"],
+      formats: ["woff2", "ttf"],
       fallbacks: ["Hiragino Mincho ProN", "Yu Mincho", "YuMincho", "serif"],
     },
   ],

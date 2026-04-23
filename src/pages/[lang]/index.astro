@@ -25,13 +25,6 @@ const preamble =
   locale === "en"
     ? "Writing here is infrequent and unhurried. Each piece is a set of notes I wanted to keep — on running systems in production, on the shape of teams that build platforms, on the long hours between Paris and Tokyo."
     : "ここでの文章は頻度も速度もゆるやかです。プロダクションでシステムを運用するということ、プラットフォームを作るチームのかたち、そしてパリと東京のあいだで過ぎていく長い時間について、手元に残しておきたかったメモを置いています。";
-
-function paragraphs(text: string): string[] {
-  return text
-    .split(/\n{2,}/)
-    .map((p) => p.replace(/\s+/g, " ").trim())
-    .filter(Boolean);
-}
 ---
 
 <BaseLayout
@@ -85,7 +78,7 @@ function paragraphs(text: string): string[] {
         <h2 class="home-section__title">{strings.home.latestTalks}</h2>
         <ol class="entries">
           {talks.map((entry) => {
-            const { title, abstract, event, eventDate, venue, slidesUrl } =
+            const { title, description, event, eventDate, venue, slidesUrl } =
               entry.data;
             return (
               <li class="entry">
@@ -110,9 +103,7 @@ function paragraphs(text: string): string[] {
                   <h3 class="entry__title">
                     <span>{title}</span>
                   </h3>
-                  <p class="entry__description">
-                    {paragraphs(abstract)[0] ?? ""}
-                  </p>
+                  <p class="entry__description">{description}</p>
                 </a>
               </li>
             );
