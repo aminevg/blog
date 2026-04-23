@@ -9,7 +9,6 @@ videoUrl: "https://www.youtube.com/watch?v=example"
 lang: en
 ---
 
-Talk given at SRE Next 2026 in Tokyo. Notes from two years of watching
-platform teams coalesce at mid-sized companies. Where the interface lands.
-Which decisions to delegate. And how to avoid the "gold-plated internal
-framework" trap.
+What a platform team actually owns — and what it should refuse to own — after two years of watching the pattern settle.
+
+Notes from two years of watching platform teams coalesce at mid-sized companies. Where the interface lands. Which decisions to delegate. And how to avoid the "gold-plated internal framework" trap.

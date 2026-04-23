@@ -14,8 +14,9 @@ case "$FILE" in
     bun run lint:file "$FILE" >&2 || exit 2 ;;
 esac
 
+# Match CI: textlint only runs on content under src/content/**.
 case "$FILE" in
-  *.md|*.mdx)
+  "$CLAUDE_PROJECT_DIR"/src/content/*.md|"$CLAUDE_PROJECT_DIR"/src/content/*.mdx)
     bun run textlint:file "$FILE" >&2 || exit 2 ;;
 esac
 

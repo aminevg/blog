@@ -6,11 +6,12 @@ export interface Props {
   src: ImageMetadata | string;
   alt: string;
   caption?: string;
+  number?: number;
   widths?: number[];
   sizes?: string;
 }
 
-const { src, alt, caption, widths, sizes } = Astro.props;
+const { src, alt, caption, number, widths, sizes } = Astro.props;
 const isMetadata = typeof src !== "string";
 ---
 
@@ -21,7 +22,7 @@ const isMetadata = typeof src !== "string";
         src={src}
         alt={alt}
         widths={widths ?? [400, 800, 1200]}
-        sizes={sizes ?? "(min-width: 48rem) 42rem, 100vw"}
+        sizes={sizes ?? "(min-width: 48rem) 32rem, 100vw"}
         loading="lazy"
         decoding="async"
       />
@@ -29,24 +30,41 @@ const isMetadata = typeof src !== "string";
       <img src={src} alt={alt} loading="lazy" decoding="async" />
     )
   }
-  {caption && <figcaption>{caption}</figcaption>}
+  {
+    caption && (
+      <figcaption>
+        {number !== undefined && (
+          <span class="figure__number">Figure {number}.</span>
+        )}{" "}
+        <em>{caption}</em>
+      </figcaption>
+    )
+  }
 </figure>
 
 <style>
   .figure {
     margin: 2rem 0;
   }
+
   .figure :global(img) {
     width: 100%;
     height: auto;
-    border-radius: 0.375rem;
-    border: 1px solid var(--color-border);
+    display: block;
   }
+
   .figure figcaption {
     margin-top: 0.625rem;
-    font-family: var(--font-sans);
-    font-size: 0.8125rem;
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
     color: var(--color-fg-muted);
-    text-align: center;
+    line-height: 1.5;
+  }
+
+  .figure__number {
+    font-style: normal;
+    font-variant: small-caps;
+    letter-spacing: 0.04em;
+    color: var(--color-fg-subtle);
   }
 </style>

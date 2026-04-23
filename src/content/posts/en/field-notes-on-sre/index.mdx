@@ -6,18 +6,23 @@ updatedDate: 2026-04-02
 lang: en
 ---
 
+import Sidenote from "~/components/mdx/Sidenote.astro";
+
 Some loose notes from a decade of pager duty at 3am, in no particular order.
 
 ## 1. SLOs before dashboards
 
-Dashboards without SLOs are aquariums. Pretty to watch, unclear what to do.
-Pick a handful of user-facing indicators. Set budgets. Let the budget decide
-whether to ship or shore up.
+Dashboards without SLOs are aquariums.<Sidenote>The 3am rule — if the same
+alert pages you twice in a week, the alert is wrong before the service
+is.</Sidenote> Pretty to watch, unclear what to do. Pick a handful of
+user-facing indicators. Set budgets. Let the budget decide whether to ship or
+shore up.
 
 ## 2. Runbooks decay faster than code
 
 Assume every runbook is wrong. Annotate them with a last-verified date. If
-nobody has touched a runbook in six months, it probably lies.
+nobody has touched a runbook in six months, it probably lies.<Sidenote>And
+the runbook written during an incident is the one that stays correct.</Sidenote>
 
 ## 3. Toil is a liquid
 

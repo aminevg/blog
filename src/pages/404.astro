@@ -1,101 +1,94 @@
 ---
-import "~/styles/global.css";
-import Head from "~/components/layout/Head.astro";
-import { SITE } from "~/config/site";
+import BaseLayout from "~/layouts/BaseLayout.astro";
 import { t } from "~/i18n/ui";
+import { localeHome } from "~/lib/paths";
 
 const en = t("en").notFound;
 const ja = t("ja").notFound;
 ---
 
-<!doctype html>
-<html lang="en">
-  <Head
-    locale="en"
-    title="404"
-    description="Page not found"
-    alternateUrl={null}
-  />
-  <body class="not-found">
-    <main class="not-found__main">
-      <div class="not-found__block">
-        <p class="not-found__code">404</p>
-        <h1 lang="en">{en.title}</h1>
-        <p lang="en" class="not-found__body">{en.body}</p>
-        <a href="/en/" lang="en" class="not-found__cta">{en.home} →</a>
-      </div>
+<BaseLayout
+  locale="en"
+  title={en.title}
+  description={en.body}
+  alternateUrl={null}
+>
+  <section class="not-found" lang="en" aria-labelledby="not-found-title-en">
+    <p class="not-found__kicker">{en.kicker}</p>
+    <h1 id="not-found-title-en" class="not-found__title">{en.title}</h1>
+    <p class="not-found__body">
+      <em>{en.body}</em>
+    </p>
+    <p class="not-found__cta">
+      <a href={localeHome("en")}>{en.home}</a>.
+    </p>
+  </section>
 
-      <hr class="not-found__divider" />
+  <hr class="not-found__rule" />
 
-      <div class="not-found__block">
-        <h1 lang="ja">{ja.title}</h1>
-        <p lang="ja" class="not-found__body">{ja.body}</p>
-        <a href="/ja/" lang="ja" class="not-found__cta">{ja.home} →</a>
-      </div>
+  <section class="not-found" lang="ja" aria-labelledby="not-found-title-ja">
+    <p class="not-found__kicker">{ja.kicker}</p>
+    <h2 id="not-found-title-ja" class="not-found__title">{ja.title}</h2>
+    <p class="not-found__body">
+      <em>{ja.body}</em>
+    </p>
+    <p class="not-found__cta">
+      <a href={localeHome("ja")}>{ja.home}</a>
+    </p>
+  </section>
+</BaseLayout>
 
-      <footer class="not-found__footer">
-        <a href={SITE.author.url} rel="home">{SITE.author.name}</a>
-      </footer>
-    </main>
+<style>
+  .not-found {
+    margin: 2rem 0;
+  }
 
-    <style>
-      .not-found {
-        min-height: 100vh;
-        display: grid;
-        place-items: center;
-        background: var(--color-bg);
-        color: var(--color-fg);
-      }
-      .not-found__main {
-        max-width: 32rem;
-        padding: 3rem 1.5rem;
-        text-align: center;
-      }
-      .not-found__code {
-        font-family: var(--font-mono);
-        font-size: 0.875rem;
-        letter-spacing: 0.2em;
-        color: var(--color-fg-subtle);
-        margin: 0 0 1rem;
-      }
-      h1 {
-        font-family: var(--font-display);
-        font-weight: 500;
-        font-size: clamp(1.5rem, 4vw, 2.25rem);
-        letter-spacing: -0.015em;
-        margin: 0 0 0.5rem;
-      }
-      .not-found__body {
-        font-family: var(--font-body);
-        color: var(--color-fg-muted);
-        margin: 0 0 1.25rem;
-        line-height: 1.55;
-      }
-      .not-found__cta {
-        font-family: var(--font-sans);
-        font-size: 0.9rem;
-        color: var(--color-accent);
-        text-decoration: none;
-      }
-      .not-found__cta:hover {
-        text-decoration: underline;
-      }
-      .not-found__divider {
-        border: none;
-        border-top: 1px solid var(--color-border);
-        margin: 2.5rem auto;
-        width: 4rem;
-      }
-      .not-found__footer {
-        margin-top: 3rem;
-        font-family: var(--font-sans);
-        font-size: 0.75rem;
-        color: var(--color-fg-subtle);
-      }
-      .not-found__footer a {
-        color: inherit;
-        text-decoration: none;
-      }
-    </style>
-  </body>
-</html>
+  .not-found__kicker {
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--color-fg-subtle);
+    margin: 0 0 0.75rem;
+  }
+
+  .not-found__title {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(2rem, 5vw, 3rem);
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+    color: var(--color-fg);
+    margin: 0 0 0.75rem;
+  }
+
+  .not-found__body {
+    color: var(--color-fg-muted);
+    margin: 0 0 1rem;
+    max-width: 32rem;
+  }
+
+  .not-found__cta {
+    margin: 0;
+  }
+
+  .not-found__cta a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: var(--color-rule);
+    text-underline-offset: 0.2em;
+  }
+
+  .not-found__cta a:hover {
+    color: var(--color-accent);
+    text-decoration-color: var(--color-accent);
+  }
+
+  .not-found__rule {
+    border: none;
+    border-top: 1px solid var(--color-rule);
+    margin: 2.5rem 0;
+  }
+</style>

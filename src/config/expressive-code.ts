@@ -1,41 +1,37 @@
 import type { AstroExpressiveCodeOptions } from "astro-expressive-code";
 
-// Expressive Code configuration — modeled on Starlight's approach.
-// See Section 12 of plans/implementation.md.
+// Expressive Code configuration. Rose Pine Dawn on cream paper, Rose Pine
+// Moon for the system-dark variant. Frame tokens pinned to the Tufte palette.
 export const expressiveCodeOptions: AstroExpressiveCodeOptions = {
-  themes: ["night-owl", "github-light"],
-  themeCssSelector: (theme) =>
-    `[data-theme='${theme.type === "dark" ? "dark" : "light"}']`,
+  themes: ["rose-pine-dawn", "rose-pine-moon"],
+  // Rely on the default `prefers-color-scheme` media query; disable the
+  // manual theme selector since the site has no toggle.
+  themeCssSelector: false,
   useThemedScrollbars: true,
   useThemedSelectionColors: true,
   cascadeLayer: "components",
   styleOverrides: {
+    borderColor: "var(--color-rule)",
+    borderRadius: "2px",
+    borderWidth: "1px",
+    codeBackground: "var(--color-surface)",
     codeFontFamily: "var(--font-mono)",
-    uiFontFamily: "var(--font-body)",
-    codeFontSize: "var(--ec-code-font-size)",
-    codeLineHeight: "var(--ec-code-line-height)",
-    borderRadius: "var(--ec-frame-radius)",
-    borderColor: "var(--ec-frame-border)",
+    codeFontSize: "0.9rem",
+    codeLineHeight: "1.55",
+    uiFontFamily: "var(--font-sans)",
+    uiFontSize: "0.72rem",
+    uiFontWeight: "500",
     frames: {
       frameBoxShadowCssValue: "none",
-      editorActiveTabIndicatorTopColor: "var(--ec-tab-accent)",
+      editorActiveTabIndicatorTopColor: "var(--color-accent)",
       editorActiveTabIndicatorBottomColor: "transparent",
-      editorTabBarBackground: "var(--ec-frame-bg)",
-      editorBackground: "var(--ec-frame-bg)",
-      terminalTitlebarBackground: "var(--ec-frame-bg)",
-      terminalBackground: "var(--ec-frame-bg)",
+      editorTabBarBackground: "var(--color-surface)",
+      editorBackground: "var(--color-surface)",
+      terminalTitlebarBackground: "var(--color-surface)",
+      terminalBackground: "var(--color-surface)",
     },
-    scrollbarThumbColor: "var(--ec-scrollbar-thumb)",
-    scrollbarThumbHoverColor: "var(--ec-scrollbar-thumb)",
-  },
-  customizeTheme: (theme) => {
-    // Ensure EC's own chrome uses our tokens; code token colors still come from
-    // the syntax theme, so only the frame integrates with the site.
-    theme.colors["editor.background"] = "var(--ec-frame-bg)";
-    return theme;
   },
   getBlockLocale: ({ file }) => {
-    // Astro page locale lives in the file path: .../[lang]/...
     const match = file.url?.pathname.match(/\/(en|ja)\//);
     return match?.[1] ?? "en";
   },

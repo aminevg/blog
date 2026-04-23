@@ -22,14 +22,6 @@ export function postUrl(locale: Locale, slug: string): string {
   return `/${locale}/blog/${slug}/`;
 }
 
-export function talkUrl(locale: Locale, slug: string): string {
-  return `/${locale}/talks/${slug}/`;
-}
-
 export function rssUrl(locale: Locale): string {
   return `/${locale}/rss.xml`;
-}
-
-export function llmsUrl(locale: Locale): string {
-  return `/${locale}/llms.txt`;
 }

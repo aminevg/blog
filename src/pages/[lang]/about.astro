@@ -4,6 +4,7 @@ import { getEntry, render } from "astro:content";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import { SITE } from "~/config/site";
 import type { Locale } from "~/config/site";
+import { otherLocale } from "~/i18n/ui";
 import { localeAbout } from "~/lib/paths";
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -12,15 +13,17 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 const { lang } = Astro.params;
 const locale = lang as Locale;
-const otherLocale: Locale = locale === "en" ? "ja" : "en";
+const other = otherLocale(locale);
 
-const entry = await getEntry("pages", `about/${locale}`);
+const [entry, otherEntry] = await Promise.all([
+  getEntry("pages", `about/${locale}`),
+  getEntry("pages", `about/${other}`),
+]);
 if (!entry) {
   throw new Error(`Missing about entry for locale ${locale}`);
 }
 
-const otherEntry = await getEntry("pages", `about/${otherLocale}`);
-const otherHref = otherEntry ? localeAbout(otherLocale) : null;
+const otherHref = otherEntry ? localeAbout(other) : null;
 
 const { Content } = await render(entry);
 ---
@@ -43,9 +46,9 @@ const { Content } = await render(entry);
 
 <style is:global>
   .prose {
-    font-family: var(--font-body);
-    font-size: 1.0625rem;
-    line-height: 1.7;
+    font-family: var(--font-serif);
+    font-size: 1.1875rem;
+    line-height: 1.65;
     color: var(--color-fg);
   }
 
@@ -54,49 +57,48 @@ const { Content } = await render(entry);
   }
 
   .prose h1 {
-    font-family: var(--font-display);
+    font-family: var(--font-serif);
+    font-style: italic;
     font-weight: 500;
     font-size: clamp(2rem, 5vw, 2.75rem);
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
     line-height: 1.15;
     color: var(--color-fg);
-    margin: 0 0 0.5rem;
+    margin: 0;
   }
 
   .prose h2 {
-    font-family: var(--font-display);
+    font-family: var(--font-serif);
+    font-style: italic;
     font-weight: 500;
     font-size: 1.5rem;
-    letter-spacing: -0.015em;
     margin: 2.5rem 0 0.75rem;
     color: var(--color-fg);
   }
 
   .prose h3 {
-    font-family: var(--font-display);
+    font-family: var(--font-serif);
+    font-style: italic;
     font-weight: 500;
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     margin: 2rem 0 0.5rem;
     color: var(--color-fg);
   }
 
   .prose p {
     margin: 0 0 1.25rem;
-    max-width: 68ch;
+    max-width: 34rem;
   }
 
   .prose a {
-    color: var(--color-accent);
+    color: inherit;
     text-decoration: underline;
-    text-decoration-color: color-mix(
-      in oklab,
-      var(--color-accent) 40%,
-      transparent
-    );
-    text-underline-offset: 0.15em;
+    text-decoration-color: var(--color-rule);
+    text-underline-offset: 0.2em;
   }
 
   .prose a:hover {
+    color: var(--color-accent);
     text-decoration-color: var(--color-accent);
   }
 
@@ -109,15 +111,15 @@ const { Content } = await render(entry);
     font-family: var(--font-mono);
     font-size: 0.9em;
     background: var(--color-surface);
-    padding: 0.1em 0.35em;
-    border-radius: 0.25em;
-    border: 1px solid var(--color-border);
+    padding: 0 0.25em;
+    border-radius: 2px;
   }
 
   .prose ul,
   .prose ol {
     margin: 0 0 1.25rem;
     padding-left: 1.25rem;
+    max-width: 34rem;
   }
 
   .prose li {
@@ -126,23 +128,17 @@ const { Content } = await render(entry);
   }
 
   .prose blockquote {
-    border-left: 2px solid var(--color-accent);
+    border-left: 2px solid var(--color-rule);
     padding-left: 1.25rem;
     font-style: italic;
     color: var(--color-fg-muted);
     margin: 1.5rem 0;
+    max-width: 34rem;
   }
 
   .prose hr {
     border: none;
-    border-top: 1px solid var(--color-border);
+    border-top: 1px solid var(--color-rule);
     margin: 3rem 0;
-  }
-
-  .prose img {
-    width: 100%;
-    height: auto;
-    border-radius: 0.375rem;
-    margin: 2rem 0;
   }
 </style>

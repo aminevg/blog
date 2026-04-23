@@ -1,0 +1,97 @@
+---
+// Uses <button> + <span> (both phrasing content) because <details> would be
+// closed out of any enclosing <p> by the HTML parser and drop out of its
+// sentence. BaseLayout's inline script toggles `is-open` on narrow viewports.
+---
+
+<span class="sidenote"
+  ><button
+    type="button"
+    class="sidenote__ref"
+    aria-label="Sidenote"
+    aria-expanded="false"><sup></sup></button
+  ><span class="sidenote__body" role="note"><sup></sup> <slot /></span></span
+>
+
+<style is:global>
+  .sidenote {
+    counter-increment: sidenote;
+    position: relative;
+  }
+
+  .sidenote__ref {
+    appearance: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-accent);
+    font: inherit;
+    cursor: pointer;
+    display: inline;
+  }
+
+  .sidenote__ref sup {
+    font-feature-settings: "sups";
+    font-size: 0.75em;
+  }
+
+  .sidenote__ref sup::before {
+    content: counter(sidenote);
+  }
+
+  .sidenote__body {
+    display: block;
+    margin: 0.75rem 0;
+    padding: 0.5rem 0 0.5rem 1rem;
+    border-left: 2px solid var(--color-rule);
+    background: color-mix(in oklab, var(--color-surface) 70%, transparent);
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--color-fg-muted);
+  }
+
+  .sidenote__body sup {
+    color: var(--color-accent);
+    margin-right: 0.3em;
+    font-style: normal;
+    font-feature-settings: "sups";
+  }
+
+  .sidenote__body sup::before {
+    content: counter(sidenote);
+  }
+
+  /* Narrow: body hidden by default, shown when sidenote is .is-open. */
+  @media (max-width: 61.99rem) {
+    .sidenote__body {
+      display: none;
+    }
+    .sidenote.is-open .sidenote__body {
+      display: block;
+    }
+  }
+
+  /* Wide: body floats into the right gutter, anchored to the line where the
+     superscript sits. The body column is 32rem; the float is 18rem with a
+     negative right-margin that pulls it past the column edge. The ref button
+     becomes inert since the body is already visible. */
+  @media (min-width: 62rem) {
+    .post__body .sidenote__body {
+      float: right;
+      clear: right;
+      width: 18rem;
+      margin: 0 -21rem 0.5rem 0;
+      padding: 0 0 0 1rem;
+      border-left: 1px solid var(--color-rule);
+      background: transparent;
+      font-size: 0.9rem;
+    }
+
+    .post__body .sidenote__ref {
+      pointer-events: none;
+    }
+  }
+</style>

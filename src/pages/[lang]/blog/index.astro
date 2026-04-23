@@ -1,13 +1,12 @@
 ---
 import type { GetStaticPaths } from "astro";
 import BaseLayout from "~/layouts/BaseLayout.astro";
-import SectionHeader from "~/components/ui/SectionHeader.astro";
-import PostCard from "~/components/ui/PostCard.astro";
+import FormattedDate from "~/components/ui/FormattedDate.astro";
 import { SITE } from "~/config/site";
 import type { Locale } from "~/config/site";
-import { t } from "~/i18n/ui";
-import { getPosts } from "~/lib/content";
-import { localeBlog } from "~/lib/paths";
+import { t, otherLocale } from "~/i18n/ui";
+import { getPosts, postSlug } from "~/lib/content";
+import { localeBlog, postUrl } from "~/lib/paths";
 
 export const getStaticPaths: GetStaticPaths = async () => {
   return SITE.locales.map((lang) => ({ params: { lang } }));
@@ -15,11 +14,10 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 const { lang } = Astro.params;
 const locale = lang as Locale;
-const otherLocale: Locale = locale === "en" ? "ja" : "en";
 const strings = t(locale);
 
 const posts = await getPosts(locale);
-const otherHref = localeBlog(otherLocale);
+const otherHref = localeBlog(otherLocale(locale));
 ---
 
 <BaseLayout
@@ -28,20 +26,107 @@ const otherHref = localeBlog(otherLocale);
   description={strings.listings.postsDescription}
   alternateUrl={otherHref}
   xDefaultUrl={localeBlog("en")}
+  ogImage={`/open-graph/${locale}/blog.png`}
 >
-  <SectionHeader
-    title={strings.listings.postsTitle}
-    description={strings.listings.postsDescription}
-    level={1}
-  />
-  <div class="blog-listing">
-    {posts.map((entry) => <PostCard entry={entry} locale={locale} />)}
-  </div>
+  <section class="listing">
+    <h1 class="listing__title">{strings.listings.postsTitle}</h1>
+    <ol class="entries">
+      {
+        posts.map((entry) => {
+          const slug = postSlug(entry);
+          return (
+            <li class="entry">
+              <a
+                href={postUrl(locale, slug)}
+                class="entry__link"
+                aria-label={entry.data.title}
+              >
+                <p class="entry__meta">
+                  <FormattedDate date={entry.data.pubDate} locale={locale} />
+                </p>
+                <h2 class="entry__title">
+                  <span>{entry.data.title}</span>
+                </h2>
+                <p class="entry__description">{entry.data.description}</p>
+              </a>
+            </li>
+          );
+        })
+      }
+    </ol>
+  </section>
 </BaseLayout>
 
 <style>
-  .blog-listing {
-    display: flex;
-    flex-direction: column;
+  .listing__title {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 1.5rem;
+    letter-spacing: 0;
+    margin: 0 0 1.25rem;
+    color: var(--color-fg);
+    border-bottom: 1px solid var(--color-rule);
+    padding-bottom: 0.5rem;
+  }
+
+  .entries {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .entry {
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--color-rule);
+  }
+
+  .entry:last-child {
+    border-bottom: none;
+  }
+
+  .entry__link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .entry__meta {
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--color-fg-subtle);
+    margin: 0 0 0.45rem;
+  }
+
+  .entry__title {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: clamp(1.4rem, 3vw, 1.875rem);
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    margin: 0 0 0.45rem;
+    color: var(--color-fg);
+  }
+
+  .entry__link:hover .entry__title span {
+    background-image: linear-gradient(
+      var(--color-highlight),
+      var(--color-highlight)
+    );
+    background-size: 100% 0.3em;
+    background-position: 0 85%;
+    background-repeat: no-repeat;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+
+  .entry__description {
+    font-size: 1.025rem;
+    color: var(--color-fg-muted);
+    margin: 0;
+    max-width: 44em;
   }
 </style>

@@ -10,10 +10,10 @@ export const UI = {
       about: "About",
     },
     home: {
-      latestPosts: "Latest posts",
-      latestTalks: "Recent talks",
-      viewAllPosts: "View all posts",
-      viewAllTalks: "View all talks",
+      latestPosts: "Blog",
+      latestTalks: "Talks",
+      viewAllPosts: "view all essays",
+      viewAllTalks: "view all talks",
     },
     listings: {
       postsTitle: "Blog",
@@ -22,15 +22,10 @@ export const UI = {
       talksDescription: "Conference talks and meetup slides.",
     },
     post: {
+      backToBlog: "Blog",
       published: "Published",
       updated: "Updated",
-      readingAlsoIn: "Also available in Japanese",
-    },
-    talk: {
-      viewSlides: "View slides",
-      watchRecording: "Watch recording",
-      atEvent: "at",
-      on: "on",
+      firstPublishedOn: "First published on",
     },
     languageSwitcher: {
       toEnglish: "English",
@@ -38,19 +33,14 @@ export const UI = {
       onlyAvailableInEnglish: "Only in English",
       onlyAvailableInJapanese: "日本語のみ",
     },
-    theme: {
-      light: "Light theme",
-      dark: "Dark theme",
-      system: "System theme",
-      toggleLabel: "Toggle theme",
-    },
     feed: {
       rss: "RSS",
     },
     notFound: {
-      title: "Page not found",
-      body: "The page you're looking for doesn't exist.",
-      home: "Home",
+      kicker: "Not found",
+      title: "Out of bounds",
+      body: "The page you wanted doesn't exist here.",
+      home: "Back to the home page",
     },
   },
   ja: {
@@ -61,10 +51,10 @@ export const UI = {
       about: "プロフィール",
     },
     home: {
-      latestPosts: "最新の記事",
-      latestTalks: "最近の登壇",
-      viewAllPosts: "すべての記事",
-      viewAllTalks: "すべての登壇",
+      latestPosts: "ブログ",
+      latestTalks: "登壇",
+      viewAllPosts: "すべての記事を見る",
+      viewAllTalks: "すべての登壇を見る",
     },
     listings: {
       postsTitle: "ブログ",
@@ -73,15 +63,10 @@ export const UI = {
       talksDescription: "カンファレンスや勉強会で話した内容。",
     },
     post: {
+      backToBlog: "ブログ",
       published: "公開",
       updated: "更新",
-      readingAlsoIn: "English version available",
-    },
-    talk: {
-      viewSlides: "スライドを見る",
-      watchRecording: "録画を見る",
-      atEvent: "＠",
-      on: "／",
+      firstPublishedOn: "初出：",
     },
     languageSwitcher: {
       toEnglish: "English",
@@ -89,19 +74,14 @@ export const UI = {
       onlyAvailableInEnglish: "Only in English",
       onlyAvailableInJapanese: "日本語のみ",
     },
-    theme: {
-      light: "ライトテーマ",
-      dark: "ダークテーマ",
-      system: "システム設定",
-      toggleLabel: "テーマを切り替え",
-    },
     feed: {
       rss: "RSS",
     },
     notFound: {
-      title: "ページが見つかりません",
-      body: "お探しのページは存在しません。",
-      home: "ホーム",
+      kicker: "見つかりません",
+      title: "ページがありません",
+      body: "このページは存在しません。",
+      home: "ホームに戻る",
     },
   },
 } as const satisfies Record<Locale, unknown>;

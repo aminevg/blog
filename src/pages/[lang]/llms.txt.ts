@@ -1,8 +1,8 @@
 import type { APIRoute } from "astro";
 import { SITE } from "~/config/site";
 import type { Locale } from "~/config/site";
-import { getPosts, getTalks, postSlug, talkSlug } from "~/lib/content";
-import { postUrl, talkUrl } from "~/lib/paths";
+import { getPosts, getTalks, postSlug } from "~/lib/content";
+import { postUrl } from "~/lib/paths";
 
 export async function getStaticPaths() {
   return SITE.locales.map((lang) => ({ params: { lang } }));
@@ -12,8 +12,10 @@ export const GET: APIRoute = async ({ params, site }) => {
   const locale = params.lang as Locale;
   const origin = site?.origin ?? "https://blog.aminevg.dev";
 
-  const posts = await getPosts(locale);
-  const talks = await getTalks(locale);
+  const [posts, talks] = await Promise.all([
+    getPosts(locale),
+    getTalks(locale),
+  ]);
 
   const lines: string[] = [];
   lines.push(`# ${SITE.title}`);
@@ -34,8 +36,9 @@ export const GET: APIRoute = async ({ params, site }) => {
   lines.push(talksHeading);
   lines.push("");
   for (const entry of talks) {
-    const url = `${origin}${talkUrl(locale, talkSlug(entry))}`;
-    lines.push(`- [${entry.data.title}](${url}): ${entry.data.description}`);
+    lines.push(
+      `- [[Talk] ${entry.data.title}](${entry.data.slidesUrl}): ${entry.data.description}`,
+    );
   }
   lines.push("");
 

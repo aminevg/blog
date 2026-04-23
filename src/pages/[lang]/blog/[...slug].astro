@@ -1,13 +1,12 @@
 ---
 import type { GetStaticPaths } from "astro";
 import { getCollection, render } from "astro:content";
-import { Image } from "astro:assets";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import FormattedDate from "~/components/ui/FormattedDate.astro";
 import type { Locale } from "~/config/site";
-import { t } from "~/i18n/ui";
+import { t, otherLocale } from "~/i18n/ui";
 import { postSlug, postExists, type PostEntry } from "~/lib/content";
-import { postUrl } from "~/lib/paths";
+import { postUrl, localeBlog } from "~/lib/paths";
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const posts = await getCollection("posts");
@@ -23,21 +22,26 @@ interface Props {
 
 const { entry } = Astro.props as unknown as Props;
 const locale = entry.data.lang as Locale;
-const otherLocale: Locale = locale === "en" ? "ja" : "en";
+const other = otherLocale(locale);
 const slug = postSlug(entry);
 const strings = t(locale);
 
-const otherHref = (await postExists(otherLocale, slug))
-  ? postUrl(otherLocale, slug)
-  : null;
-const xDefault = (await postExists("en", slug))
-  ? postUrl("en", slug)
-  : undefined;
+const [otherExists, enExists] = await Promise.all([
+  postExists(other, slug),
+  postExists("en", slug),
+]);
+const otherHref = otherExists ? postUrl(other, slug) : null;
+const xDefault = enExists ? postUrl("en", slug) : undefined;
 
 const { Content } = await render(entry);
-const { title, description, pubDate, updatedDate, heroImage, canonicalUrl } =
-  entry.data;
-const heroTransitionName = `thumb-post-${slug}`;
+const {
+  title,
+  description,
+  pubDate,
+  updatedDate,
+  canonicalUrl,
+  canonicalSource,
+} = entry.data;
 ---
 
 <BaseLayout
@@ -50,72 +54,211 @@ const heroTransitionName = `thumb-post-${slug}`;
   ogImage={`/open-graph/${locale}/blog/${slug}.png`}
   article={{ publishedTime: pubDate, modifiedTime: updatedDate }}
 >
-  <article class="post prose">
+  <p class="backlink">
+    <a href={localeBlog(locale)}>← {strings.post.backToBlog}</a>
+  </p>
+
+  <article class="post">
     <header class="post__header">
-      <h1>{title}</h1>
-      <p class="post__meta">
-        <span>
-          {strings.post.published}{" "}
-          <FormattedDate date={pubDate} locale={locale} />
-        </span>
-        {
-          updatedDate && (
-            <span class="post__meta-updated">
-              {" · "}
-              {strings.post.updated}{" "}
-              <FormattedDate date={updatedDate} locale={locale} />
-            </span>
-          )
-        }
+      <p class="post__kicker">
+        <FormattedDate date={pubDate} locale={locale} />
       </p>
+      <h1 class="post__title">{title}</h1>
+      <p class="post__lede">{description}</p>
     </header>
 
-    {
-      heroImage && (
-        <div
-          class="post__hero"
-          style={`view-transition-name: ${heroTransitionName}`}
-        >
-          <Image
-            src={heroImage}
-            alt=""
-            widths={[640, 1024, 1536]}
-            sizes="(min-width: 48rem) 42rem, 100vw"
-            loading="eager"
-            decoding="async"
-          />
-        </div>
-      )
-    }
-
-    <div class="post__body">
+    <div class="post__body prose">
       <Content />
     </div>
+
+    <footer class="post__footer">
+      {
+        updatedDate && (
+          <p>
+            {strings.post.updated}{" "}
+            <FormattedDate date={updatedDate} locale={locale} />
+          </p>
+        )
+      }
+      {
+        canonicalUrl && (
+          <p>
+            {strings.post.firstPublishedOn}{" "}
+            <a href={canonicalUrl.toString()} rel="canonical">
+              {canonicalSource ?? new URL(canonicalUrl.toString()).host}{" "}
+              <span aria-hidden="true">↗</span>
+            </a>
+          </p>
+        )
+      }
+    </footer>
   </article>
 </BaseLayout>
 
-<style>
+<style is:global>
+  .backlink {
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    margin: 0 0 1.5rem;
+  }
+
+  .backlink a {
+    color: var(--color-fg-muted);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    padding-bottom: 0.1rem;
+    transition:
+      color 160ms,
+      border-color 160ms;
+  }
+
+  .backlink a:hover {
+    color: var(--color-accent);
+    border-bottom-color: var(--color-accent);
+  }
+
+  .post {
+    counter-reset: sidenote;
+    position: relative;
+  }
+
   .post__header {
     margin-bottom: 2rem;
   }
 
-  .post__meta {
+  .post__kicker {
     font-family: var(--font-sans);
-    font-size: 0.8125rem;
+    font-size: 0.72rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--color-fg-subtle);
+    margin: 0 0 0.75rem;
+  }
+
+  .post__title {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(2.25rem, 5vw, 3.5rem);
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+    color: var(--color-fg);
+    margin: 0 0 1rem;
+  }
+
+  .post__lede {
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    line-height: 1.5;
     color: var(--color-fg-muted);
+    max-width: 44em;
     margin: 0;
   }
 
-  .post__hero {
-    margin: 0 0 2.5rem;
-    border-radius: 0.5rem;
-    overflow: hidden;
-    border: 1px solid var(--color-border);
+  .post__body {
+    max-width: 32rem;
+    position: relative;
   }
 
-  .post__hero :global(img) {
-    width: 100%;
-    height: auto;
-    display: block;
+  .post__footer {
+    margin-top: 3rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-rule);
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--color-fg-muted);
+    font-size: 0.95rem;
+    max-width: 32rem;
+  }
+
+  .post__footer p {
+    margin: 0.35rem 0;
+  }
+
+  .post__footer a {
+    color: var(--color-fg-muted);
+    text-decoration: underline;
+    text-decoration-color: var(--color-rule);
+  }
+
+  .post__footer a:hover {
+    color: var(--color-accent);
+    text-decoration-color: var(--color-accent);
+  }
+
+  .prose p {
+    margin: 0 0 1.25rem;
+  }
+
+  .prose h2 {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 1.5rem;
+    margin: 2.5rem 0 0.75rem;
+    color: var(--color-fg);
+  }
+
+  .prose h3 {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 1.25rem;
+    margin: 2rem 0 0.5rem;
+    color: var(--color-fg);
+  }
+
+  .prose a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: var(--color-rule);
+    text-underline-offset: 0.2em;
+  }
+
+  .prose a:hover {
+    color: var(--color-accent);
+    text-decoration-color: var(--color-accent);
+  }
+
+  .prose strong {
+    font-weight: 600;
+    color: var(--color-fg);
+  }
+
+  .prose blockquote {
+    border-left: 2px solid var(--color-rule);
+    padding-left: 1.25rem;
+    font-style: italic;
+    color: var(--color-fg-muted);
+    margin: 1.5rem 0;
+  }
+
+  .prose hr {
+    border: none;
+    border-top: 1px solid var(--color-rule);
+    margin: 2.5rem 0;
+  }
+
+  .prose ul,
+  .prose ol {
+    margin: 0 0 1.25rem;
+    padding-left: 1.25rem;
+  }
+
+  .prose li {
+    margin-bottom: 0.375rem;
+    line-height: 1.6;
+  }
+
+  .prose :not(pre) > code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    background: var(--color-surface);
+    padding: 0 0.25em;
+    border-radius: 2px;
   }
 </style>
