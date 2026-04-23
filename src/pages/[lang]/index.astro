@@ -35,6 +35,11 @@ const preamble =
   xDefaultUrl={localeHome("en")}
   ogImage={`/open-graph/${locale}/home.png`}
 >
+  {
+    /* Visually hidden; the masthead already shows the site title, but the
+       page still needs a unique <h1> for outline/AT tools. */
+  }
+  <h1 class="visually-hidden">{SITE.title}</h1>
   <section class="preamble">
     <p><em>{preamble}</em></p>
   </section>

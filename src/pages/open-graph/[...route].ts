@@ -52,7 +52,12 @@ async function loadFontBinary(
 
 async function loadFonts(context: APIContext) {
   const family = async (cssVariable: string, name: string) => {
-    const entries = fontData[cssVariable as keyof typeof fontData] ?? [];
+    const entries = fontData[cssVariable as keyof typeof fontData];
+    if (!entries || entries.length === 0) {
+      throw new Error(
+        `No font data for ${cssVariable} (${name}). Check the fonts array in astro.config.mjs — the cssVariable must match and weights/styles must be configured.`,
+      );
+    }
     return Promise.all(
       entries.map(async (entry) => {
         const ttfSrc =
@@ -132,9 +137,8 @@ const el = (
   children?: Child | Child[],
 ): Node => ({ type, props: { style, children } });
 
-function template(page: PageData): Node {
+function template(page: PageData, brand: string): Node {
   const kicker = kickerFor(page);
-  const brand = `${SITE.author.name.toUpperCase()}  ·  BLOG.AMINEVG.DEV`;
   const isHome = page.kind === "home";
 
   const top: Child[] = [];
@@ -294,8 +298,10 @@ export async function getStaticPaths() {
 
 export const GET: APIRoute = async (context) => {
   const fonts = await loadFonts(context);
+  const host = (context.site ?? new URL("https://blog.aminevg.dev")).host;
+  const brand = `${SITE.author.name.toUpperCase()}  ·  ${host.toUpperCase()}`;
   return new ImageResponse(
-    template(context.props as PageData) as unknown as never,
+    template(context.props as PageData, brand) as unknown as never,
     {
       width: WIDTH,
       height: HEIGHT,

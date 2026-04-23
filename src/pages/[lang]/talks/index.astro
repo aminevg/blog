@@ -19,8 +19,10 @@ const otherLocale: Locale = locale === "en" ? "ja" : "en";
 const strings = t(locale);
 
 const talks = await getTalks(locale);
-// Resolve each entry's markdown body into a <Content /> component at build
-// time so abstracts can use inline markdown (links, emphasis, inline code).
+// Each entry's markdown body is rendered inside the slide-link anchor that
+// wraps the whole listing row, so abstracts must not contain interactive
+// elements (links, buttons) — that would nest inside an <a> and produce
+// invalid HTML.
 const talksWithContent = await Promise.all(
   talks.map(async (entry) => ({ entry, ...(await render(entry)) })),
 );
@@ -36,19 +38,19 @@ const otherHref = localeTalks(otherLocale);
   ogImage={`/open-graph/${locale}/talks.png`}
 >
   <section class="listing">
-    <h2 class="listing__title">{strings.listings.talksTitle}</h2>
+    <h1 class="listing__title">{strings.listings.talksTitle}</h1>
     <ol class="entries">
       {
         talksWithContent.map(({ entry, Content }) => {
-          const { title, event, eventDate, venue, slidesUrl, videoUrl } =
-            entry.data;
+          const { title, event, eventDate, venue, slidesUrl } = entry.data;
           return (
             <li class="entry">
               <a
                 href={slidesUrl}
-                class="entry__header"
+                class="entry__link"
                 target="_blank"
                 rel="noopener"
+                aria-label={title}
               >
                 <p class="entry__meta">
                   <span>{event}</span>
@@ -61,21 +63,13 @@ const otherHref = localeTalks(otherLocale);
                   <span aria-hidden="true"> · </span>
                   <FormattedDate date={eventDate} locale={locale} />
                 </p>
-                <h3 class="entry__title">
+                <h2 class="entry__title">
                   <span>{title}</span>
-                </h3>
+                </h2>
+                <div class="entry__abstract prose">
+                  <Content />
+                </div>
               </a>
-              <div class="entry__abstract prose">
-                <Content />
-              </div>
-              {videoUrl && (
-                <p class="entry__recording">
-                  <a href={videoUrl} target="_blank" rel="noopener">
-                    {strings.talk.watchRecording}{" "}
-                    <span aria-hidden="true">↗</span>
-                  </a>
-                </p>
-              )}
             </li>
           );
         })
@@ -111,7 +105,7 @@ const otherHref = localeTalks(otherLocale);
     border-bottom: none;
   }
 
-  .entry__header {
+  .entry__link {
     display: block;
     text-decoration: none;
     color: inherit;
@@ -137,7 +131,7 @@ const otherHref = localeTalks(otherLocale);
     color: var(--color-fg);
   }
 
-  .entry__header:hover .entry__title span {
+  .entry__link:hover .entry__title span {
     background-image: linear-gradient(
       var(--color-highlight),
       var(--color-highlight)
@@ -162,29 +156,5 @@ const otherHref = localeTalks(otherLocale);
 
   .entry__abstract p:last-child {
     margin-bottom: 0;
-  }
-
-  .entry__recording {
-    margin: 0.5rem 0 0;
-    font-family: var(--font-sans);
-    font-size: 0.72rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-  }
-
-  .entry__recording a {
-    color: var(--color-fg-muted);
-    text-decoration: none;
-    border-bottom: 1px solid transparent;
-    padding-bottom: 0.1rem;
-    transition:
-      color 160ms,
-      border-color 160ms;
-  }
-
-  .entry__recording a:hover {
-    color: var(--color-fg);
-    border-bottom-color: var(--color-fg);
   }
 </style>

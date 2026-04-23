@@ -27,9 +27,6 @@ export const UI = {
       updated: "Updated",
       firstPublishedOn: "First published on",
     },
-    talk: {
-      watchRecording: "Watch recording",
-    },
     languageSwitcher: {
       toEnglish: "English",
       toJapanese: "日本語",
@@ -70,9 +67,6 @@ export const UI = {
       published: "公開",
       updated: "更新",
       firstPublishedOn: "初出：",
-    },
-    talk: {
-      watchRecording: "録画を見る",
     },
     languageSwitcher: {
       toEnglish: "English",

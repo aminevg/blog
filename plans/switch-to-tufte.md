@@ -47,7 +47,7 @@ Not in scope: renaming routes (URLs stay `/blog/…`, `/about/…`); adding tags
 ### 2.4 i18n strings to remove (`src/i18n/ui.ts`)
 
 - `theme.light`, `theme.dark`, `theme.system`, `theme.toggleLabel` — no toggle
-- `talk.viewSlides`, `talk.watchRecording`, `talk.atEvent`, `talk.on` — repurpose or remove depending on §10.4 final copy
+- `talk.viewSlides`, `talk.watchRecording`, `talk.atEvent`, `talk.on` — dropped entirely. The talks listing has no in-page talk chrome beyond the wrapping slide link (§10.4).
 - `post.readingAlsoIn` — dropped (translation is reached via the masthead language switcher; no "Also in …" row in the post footer)
 
 ## 3. Typography & fonts
@@ -546,22 +546,16 @@ List of all talks for the current language, newest first. There is no talk detai
 <article class="talk-entry">
   <a href="{slidesUrl}" target="_blank" rel="noopener" aria-label="{title}">
     <p class="talk-entry__meta">SRE NEXT · TOKYO · FEB 14, 2026</p>
-    <h3 class="talk-entry__title">Platform engineering in 2026</h3>
+    <h2 class="talk-entry__title">Platform engineering in 2026</h2>
     <div class="talk-entry__abstract"><content /></div>
-    <p class="talk-entry__action">View slides ↗</p>
   </a>
-  {videoUrl && (
-  <p class="talk-entry__recording">
-    <a href="{videoUrl}" target="_blank" rel="noopener">Watch recording ↗</a>
-  </p>
-  )}
 </article>
 ```
 
-- Whole card = one `<a>` to slides URL, `aria-label={title}`. "View slides ↗" lives visually inside the card as a secondary affordance but is part of the single wrapping anchor.
-- "Watch recording ↗" is a separate `<a>` _outside_ the wrapping anchor (still inside `<article>`) — nested interactives not allowed; recording is a secondary destination and deserves its own focusable link.
+- Whole entry = one `<a>` to slides URL, `aria-label={title}`. Same shape as the blog listing for consistency.
+- No "Watch recording" affordance on the listing. If a recording exists, the slides deck is expected to link to it (or the author adds it to the abstract text — but note the nested-interactive constraint below).
 - Meta kicker: `EVENT · VENUE · DATE` (venue conditional). Small-caps IBM Plex Sans.
-- Abstract is rendered as paragraphs (MD multiline) in muted body serif.
+- Abstract is rendered as paragraphs (MD multiline) in muted body serif. **Authors must not include markdown links or other interactive elements inside talk abstracts** — they would nest inside the wrapping `<a>` and produce invalid HTML.
 - Thin `--color-rule` bottom border between entries.
 
 ### 10.5 About — `[lang]/about.astro`
@@ -892,7 +886,7 @@ Keep:
 - `home.*` — may need minor copy tweak for section titles (no `§ 01` numbering)
 - `listings.*`
 - `post.*` — `published`, `updated`, `firstPublishedOn`, `backToBlog` stay (`readingAlsoIn` removed)
-- `talk.*` — prune unused fields; keep `viewSlides`, `watchRecording`, `atEvent`, `on` if used on the new flattened listing
+- `talk.*` — whole namespace removed. The flattened listing uses only the wrapping slide link (§10.4); no in-page talk chrome strings remain.
 - `languageSwitcher.*`
 - `feed.rss`
 - `notFound.*` — keep; content moves into `404.astro` directly

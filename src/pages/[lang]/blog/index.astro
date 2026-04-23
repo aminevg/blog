@@ -30,7 +30,7 @@ const otherHref = localeBlog(otherLocale);
   ogImage={`/open-graph/${locale}/blog.png`}
 >
   <section class="listing">
-    <h2 class="listing__title">{strings.listings.postsTitle}</h2>
+    <h1 class="listing__title">{strings.listings.postsTitle}</h1>
     <ol class="entries">
       {
         posts.map((entry) => {
@@ -45,9 +45,9 @@ const otherHref = localeBlog(otherLocale);
                 <p class="entry__meta">
                   <FormattedDate date={entry.data.pubDate} locale={locale} />
                 </p>
-                <h3 class="entry__title">
+                <h2 class="entry__title">
                   <span>{entry.data.title}</span>
-                </h3>
+                </h2>
                 <p class="entry__description">{entry.data.description}</p>
               </a>
             </li>
