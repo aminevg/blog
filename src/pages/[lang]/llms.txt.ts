@@ -12,8 +12,10 @@ export const GET: APIRoute = async ({ params, site }) => {
   const locale = params.lang as Locale;
   const origin = site?.origin ?? "https://blog.aminevg.dev";
 
-  const posts = await getPosts(locale);
-  const talks = await getTalks(locale);
+  const [posts, talks] = await Promise.all([
+    getPosts(locale),
+    getTalks(locale),
+  ]);
 
   const lines: string[] = [];
   lines.push(`# ${SITE.title}`);

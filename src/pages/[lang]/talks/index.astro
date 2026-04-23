@@ -5,7 +5,7 @@ import BaseLayout from "~/layouts/BaseLayout.astro";
 import FormattedDate from "~/components/ui/FormattedDate.astro";
 import { SITE } from "~/config/site";
 import type { Locale } from "~/config/site";
-import { t } from "~/i18n/ui";
+import { t, otherLocale } from "~/i18n/ui";
 import { getTalks } from "~/lib/content";
 import { localeTalks } from "~/lib/paths";
 
@@ -15,18 +15,15 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 const { lang } = Astro.params;
 const locale = lang as Locale;
-const otherLocale: Locale = locale === "en" ? "ja" : "en";
 const strings = t(locale);
 
 const talks = await getTalks(locale);
-// Each entry's markdown body is rendered inside the slide-link anchor that
-// wraps the whole listing row, so abstracts must not contain interactive
-// elements (links, buttons) — that would nest inside an <a> and produce
-// invalid HTML.
+// Talk abstracts render inside the outer slide-link <a>, so MDX content must
+// be phrasing-only — no nested links or buttons.
 const talksWithContent = await Promise.all(
   talks.map(async (entry) => ({ entry, ...(await render(entry)) })),
 );
-const otherHref = localeTalks(otherLocale);
+const otherHref = localeTalks(otherLocale(locale));
 ---
 
 <BaseLayout

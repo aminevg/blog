@@ -4,7 +4,7 @@ import BaseLayout from "~/layouts/BaseLayout.astro";
 import FormattedDate from "~/components/ui/FormattedDate.astro";
 import { SITE } from "~/config/site";
 import type { Locale } from "~/config/site";
-import { t } from "~/i18n/ui";
+import { t, otherLocale } from "~/i18n/ui";
 import { getPosts, getTalks, postSlug } from "~/lib/content";
 import { localeBlog, localeTalks, localeHome, postUrl } from "~/lib/paths";
 
@@ -16,10 +16,14 @@ const { lang } = Astro.params;
 const locale = lang as Locale;
 const strings = t(locale);
 
-const posts = (await getPosts(locale)).slice(0, SITE.home.postsCount);
-const talks = (await getTalks(locale)).slice(0, SITE.home.talksCount);
+const [allPosts, allTalks] = await Promise.all([
+  getPosts(locale),
+  getTalks(locale),
+]);
+const posts = allPosts.slice(0, SITE.home.postsCount);
+const talks = allTalks.slice(0, SITE.home.talksCount);
 
-const otherLocaleHref = localeHome(locale === "en" ? "ja" : "en");
+const otherLocaleHref = localeHome(otherLocale(locale));
 
 const preamble =
   locale === "en"
@@ -35,10 +39,6 @@ const preamble =
   xDefaultUrl={localeHome("en")}
   ogImage={`/open-graph/${locale}/home.png`}
 >
-  {
-    /* Visually hidden; the masthead already shows the site title, but the
-       page still needs a unique <h1> for outline/AT tools. */
-  }
   <h1 class="visually-hidden">{SITE.title}</h1>
   <section class="preamble">
     <p><em>{preamble}</em></p>

@@ -13,8 +13,10 @@ export const GET: APIRoute = async ({ params, site }) => {
   const locale = params.lang as Locale;
   const origin = (site ?? new URL("https://blog.aminevg.dev")).origin;
 
-  const posts = await getPosts(locale);
-  const talks = await getTalks(locale);
+  const [posts, talks] = await Promise.all([
+    getPosts(locale),
+    getTalks(locale),
+  ]);
 
   const items = [
     ...posts.map((entry) => ({

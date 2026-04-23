@@ -1,9 +1,6 @@
 import { getCollection, type CollectionEntry } from "astro:content";
 import type { Locale } from "~/config/site";
 
-// Collection IDs look like "en/my-post" or "ja/my-talk" (Astro strips the
-// trailing `/index` segment). Split locale and slug.
-
 export type PostEntry = CollectionEntry<"posts">;
 export type TalkEntry = CollectionEntry<"talks">;
 

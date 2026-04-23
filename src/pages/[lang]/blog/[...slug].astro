@@ -4,7 +4,7 @@ import { getCollection, render } from "astro:content";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import FormattedDate from "~/components/ui/FormattedDate.astro";
 import type { Locale } from "~/config/site";
-import { t } from "~/i18n/ui";
+import { t, otherLocale } from "~/i18n/ui";
 import { postSlug, postExists, type PostEntry } from "~/lib/content";
 import { postUrl, localeBlog } from "~/lib/paths";
 
@@ -22,16 +22,16 @@ interface Props {
 
 const { entry } = Astro.props as unknown as Props;
 const locale = entry.data.lang as Locale;
-const otherLocale: Locale = locale === "en" ? "ja" : "en";
+const other = otherLocale(locale);
 const slug = postSlug(entry);
 const strings = t(locale);
 
-const otherHref = (await postExists(otherLocale, slug))
-  ? postUrl(otherLocale, slug)
-  : null;
-const xDefault = (await postExists("en", slug))
-  ? postUrl("en", slug)
-  : undefined;
+const [otherExists, enExists] = await Promise.all([
+  postExists(other, slug),
+  postExists("en", slug),
+]);
+const otherHref = otherExists ? postUrl(other, slug) : null;
+const xDefault = enExists ? postUrl("en", slug) : undefined;
 
 const { Content } = await render(entry);
 const {

@@ -6,9 +6,7 @@ import { getCollection } from "astro:content";
 import { readFile } from "node:fs/promises";
 import { postSlug } from "~/lib/content";
 import { SITE, type Locale } from "~/config/site";
-
-// Tufte OG layout — cream paper, 8px oxblood left border, typographic only.
-// Four text blocks top-to-bottom: kicker · title · lede · brand line.
+import { t } from "~/i18n/ui";
 
 type Kind = "post" | "blog" | "talks" | "about" | "home";
 
@@ -34,10 +32,8 @@ const BORDER = 8;
 type Weight = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
 type Style = "normal" | "italic";
 
-// Astro's fontData maps CSS variables to font-face metadata, including URLs
-// Astro serves (in dev) or emits under `outDir` (in build). We pick the TTF
-// variant because satori (inside @vercel/og) can't parse WOFF2 or variable
-// fonts. `astro.config.mjs` emits both woff2 (for the site) and ttf (for us).
+// Satori (inside @vercel/og) can't parse woff2 or variable fonts, so pick the
+// TTF emitted alongside woff2 by astro.config.mjs.
 async function loadFontBinary(
   url: string,
   context: APIContext,
@@ -83,6 +79,14 @@ async function loadFonts(context: APIContext) {
   return [...serif, ...sans, ...jp];
 }
 
+// Memoize across OG requests: TTFs are read once and reused for every image.
+// In dev, `context` from the first call is captured — fine because every
+// route runs against the same dev server origin.
+let fontsPromise: ReturnType<typeof loadFonts> | null = null;
+function getFonts(context: APIContext) {
+  return (fontsPromise ??= loadFonts(context));
+}
+
 function monthLabel(date: Date, locale: Locale): string {
   if (locale === "ja") {
     return `${date.getUTCFullYear()}年${date.getUTCMonth() + 1}月${date.getUTCDate()}日`;
@@ -104,30 +108,25 @@ function monthLabel(date: Date, locale: Locale): string {
   return `${months[date.getUTCMonth()]} ${date.getUTCDate()}, ${date.getUTCFullYear()}`;
 }
 
+const OG_KICKER: Record<Exclude<Kind, "home">, Record<Locale, string>> = {
+  post: { en: "ESSAYS", ja: "記事" },
+  blog: { en: "BLOG", ja: "ブログ" },
+  talks: { en: "TALKS", ja: "登壇" },
+  about: { en: "COLOPHON", ja: "プロフィール" },
+};
+
 function kickerFor(page: PageData): string | null {
-  switch (page.kind) {
-    case "post":
-      return page.pubDate
-        ? `${monthLabel(page.pubDate, page.locale)}  ·  ${page.locale === "ja" ? "記事" : "ESSAYS"}`
-        : page.locale === "ja"
-          ? "記事"
-          : "ESSAYS";
-    case "blog":
-      return page.locale === "ja" ? "ブログ" : "BLOG";
-    case "talks":
-      return page.locale === "ja" ? "登壇" : "TALKS";
-    case "about":
-      return page.locale === "ja" ? "プロフィール" : "COLOPHON";
-    case "home":
-      return null;
+  if (page.kind === "home") return null;
+  const label = OG_KICKER[page.kind][page.locale];
+  if (page.kind === "post" && page.pubDate) {
+    return `${monthLabel(page.pubDate, page.locale)}  ·  ${label}`;
   }
+  return label;
 }
 
-// Satori (via @vercel/og) accepts React-shaped element trees. We build plain
-// objects so no React dep is needed.
 type StyleObj = Record<string, string | number>;
-type Child = Node | string;
-interface Node {
+type Child = OgNode | string;
+interface OgNode {
   type: string;
   props: { style?: StyleObj; children?: Child | Child[] };
 }
@@ -135,9 +134,9 @@ const el = (
   type: string,
   style: StyleObj,
   children?: Child | Child[],
-): Node => ({ type, props: { style, children } });
+): OgNode => ({ type, props: { style, children } });
 
-function template(page: PageData, brand: string): Node {
+function template(page: PageData, brand: string): OgNode {
   const kicker = kickerFor(page);
   const isHome = page.kind === "home";
 
@@ -243,7 +242,10 @@ function template(page: PageData, brand: string): Node {
 async function collectPages(): Promise<Record<string, PageData>> {
   const pages: Record<string, PageData> = {};
 
-  const posts = await getCollection("posts");
+  const [posts, aboutPages] = await Promise.all([
+    getCollection("posts"),
+    getCollection("pages"),
+  ]);
   for (const entry of posts) {
     pages[`${entry.data.lang}/blog/${postSlug(entry)}`] = {
       title: entry.data.title,
@@ -254,7 +256,6 @@ async function collectPages(): Promise<Record<string, PageData>> {
     };
   }
 
-  const aboutPages = await getCollection("pages");
   for (const entry of aboutPages) {
     pages[`${entry.data.lang}/about`] = {
       title: entry.data.title,
@@ -271,14 +272,15 @@ async function collectPages(): Promise<Record<string, PageData>> {
       kind: "home",
       locale,
     };
+    const strings = t(locale);
     pages[`${locale}/blog`] = {
-      title: locale === "ja" ? "ブログ" : "Blog",
+      title: strings.listings.postsTitle,
       description: SITE.description[locale],
       kind: "blog",
       locale,
     };
     pages[`${locale}/talks`] = {
-      title: locale === "ja" ? "登壇" : "Talks",
+      title: strings.listings.talksTitle,
       description: SITE.description[locale],
       kind: "talks",
       locale,
@@ -297,7 +299,7 @@ export async function getStaticPaths() {
 }
 
 export const GET: APIRoute = async (context) => {
-  const fonts = await loadFonts(context);
+  const fonts = await getFonts(context);
   const host = (context.site ?? new URL("https://blog.aminevg.dev")).host;
   const brand = `${SITE.author.name.toUpperCase()}  ·  ${host.toUpperCase()}`;
   return new ImageResponse(

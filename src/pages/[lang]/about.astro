@@ -4,6 +4,7 @@ import { getEntry, render } from "astro:content";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import { SITE } from "~/config/site";
 import type { Locale } from "~/config/site";
+import { otherLocale } from "~/i18n/ui";
 import { localeAbout } from "~/lib/paths";
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -12,15 +13,17 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 const { lang } = Astro.params;
 const locale = lang as Locale;
-const otherLocale: Locale = locale === "en" ? "ja" : "en";
+const other = otherLocale(locale);
 
-const entry = await getEntry("pages", `about/${locale}`);
+const [entry, otherEntry] = await Promise.all([
+  getEntry("pages", `about/${locale}`),
+  getEntry("pages", `about/${other}`),
+]);
 if (!entry) {
   throw new Error(`Missing about entry for locale ${locale}`);
 }
 
-const otherEntry = await getEntry("pages", `about/${otherLocale}`);
-const otherHref = otherEntry ? localeAbout(otherLocale) : null;
+const otherHref = otherEntry ? localeAbout(other) : null;
 
 const { Content } = await render(entry);
 ---

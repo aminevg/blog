@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import { t } from "~/i18n/ui";
+import { localeHome } from "~/lib/paths";
 
 const en = t("en").notFound;
 const ja = t("ja").notFound;
@@ -19,7 +20,7 @@ const ja = t("ja").notFound;
       <em>{en.body}</em>
     </p>
     <p class="not-found__cta">
-      <a href="/en/">{en.home}</a>.
+      <a href={localeHome("en")}>{en.home}</a>.
     </p>
   </section>
 
@@ -32,7 +33,7 @@ const ja = t("ja").notFound;
       <em>{ja.body}</em>
     </p>
     <p class="not-found__cta">
-      <a href="/ja/">{ja.home}</a>
+      <a href={localeHome("ja")}>{ja.home}</a>
     </p>
   </section>
 </BaseLayout>

@@ -32,11 +32,7 @@ const switcherHref = otherLocaleHref ?? localeHome(target);
 ---
 
 <header class="masthead">
-  {
-    /* Intentionally not an <h1>: the masthead repeats on every page, so the
-       site title must not claim the page-level heading. Each page provides
-       its own <h1>. */
-  }
+  {/* Not an <h1> — each page owns its own page-level heading. */}
   <p class="masthead__title">
     <a href={localeHome(locale)} rel="home">{SITE.author.name}</a>
   </p>

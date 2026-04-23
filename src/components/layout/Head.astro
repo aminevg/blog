@@ -1,6 +1,8 @@
 ---
 import type { Locale } from "~/config/site";
 import { SITE } from "~/config/site";
+import { otherLocale } from "~/i18n/ui";
+import { rssUrl } from "~/lib/paths";
 
 export interface Props {
   locale: Locale;
@@ -35,7 +37,7 @@ const resolvedOgImage = ogImage
 
 const fullTitle = title === SITE.title ? title : `${title} — ${SITE.title}`;
 
-const otherLocaleCode: Locale = locale === "en" ? "ja" : "en";
+const otherLocaleCode = otherLocale(locale);
 ---
 
 <head>
@@ -120,18 +122,16 @@ const otherLocaleCode: Locale = locale === "en" ? "ja" : "en";
 
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 
-  <link
-    rel="alternate"
-    type="application/rss+xml"
-    title={`${SITE.title} — EN`}
-    href="/en/rss.xml"
-  />
-  <link
-    rel="alternate"
-    type="application/rss+xml"
-    title={`${SITE.title} — JA`}
-    href="/ja/rss.xml"
-  />
+  {
+    SITE.locales.map((loc) => (
+      <link
+        rel="alternate"
+        type="application/rss+xml"
+        title={`${SITE.title} — ${loc.toUpperCase()}`}
+        href={rssUrl(loc)}
+      />
+    ))
+  }
 
   <link rel="alternate" type="text/markdown" href={`/${locale}/llms.txt`} />
 

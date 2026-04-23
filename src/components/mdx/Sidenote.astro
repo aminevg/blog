@@ -1,18 +1,7 @@
 ---
-// Tufte-style marginalia. Auto-numbered via a CSS counter scoped to the
-// surrounding `.post` article.
-//
-// We do NOT wrap the body in a <details>/<summary> disclosure. The MDX
-// author always writes the sidenote mid-paragraph (`text.<Sidenote>note</Sidenote>`),
-// and browsers' HTML parser treats <details> as flow content: when encountered
-// inside a <p>, the open <p> is closed automatically and <details> becomes a
-// sibling of the paragraph. So the note would drop out of its sentence and
-// render on its own line, regardless of CSS.
-//
-// Instead: a <button> toggle + a <span> body (both phrasing content, both
-// legal children of <p>). The viewport-sync script in BaseLayout toggles the
-// `is-open` class so the body is always visible on wide and collapsible by
-// click on narrow.
+// Uses <button> + <span> (both phrasing content) because <details> would be
+// closed out of any enclosing <p> by the HTML parser and drop out of its
+// sentence. BaseLayout's inline script toggles `is-open` on narrow viewports.
 ---
 
 <span class="sidenote"
