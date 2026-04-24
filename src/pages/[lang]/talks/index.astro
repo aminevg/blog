@@ -1,8 +1,8 @@
 ---
 import type { GetStaticPaths } from "astro";
-import { render } from "astro:content";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import FormattedDate from "~/components/ui/FormattedDate.astro";
+import CardLink from "~/components/ui/CardLink.astro";
 import { SITE } from "~/config/site";
 import type { Locale } from "~/config/site";
 import { t, otherLocale } from "~/i18n/ui";
@@ -18,11 +18,6 @@ const locale = lang as Locale;
 const strings = t(locale);
 
 const talks = await getTalks(locale);
-// Talk abstracts render inside the outer slide-link <a>, so MDX content must
-// be phrasing-only — no nested links or buttons.
-const talksWithContent = await Promise.all(
-  talks.map(async (entry) => ({ entry, ...(await render(entry)) })),
-);
 const otherHref = localeTalks(otherLocale(locale));
 ---
 
@@ -34,22 +29,26 @@ const otherHref = localeTalks(otherLocale(locale));
   xDefaultUrl={localeTalks("en")}
   ogImage={`/open-graph/${locale}/talks.png`}
 >
-  <section class="listing">
-    <h1 class="listing__title">{strings.listings.talksTitle}</h1>
-    <ol class="entries">
+  <section>
+    <h1
+      class="text-ink border-rule mb-5 border-b pb-2 font-serif text-2xl font-medium italic"
+    >
+      {strings.listings.talksTitle}
+    </h1>
+    <ol class="m-0 list-none p-0">
       {
-        talksWithContent.map(({ entry, Content }) => {
-          const { title, event, eventDate, venue, slidesUrl } = entry.data;
+        talks.map((entry) => {
+          const { title, description, event, eventDate, venue, slidesUrl } =
+            entry.data;
           return (
-            <li class="entry">
-              <a
+            <li class="border-rule border-b py-6 last:border-b-0">
+              <CardLink
                 href={slidesUrl}
-                class="entry__link"
                 target="_blank"
                 rel="noopener"
                 aria-label={title}
               >
-                <p class="entry__meta">
+                <p slot="meta" class="text-ink-subtle kicker mb-[0.45rem]">
                   <span>{event}</span>
                   {venue && (
                     <>
@@ -60,13 +59,14 @@ const otherHref = localeTalks(otherLocale(locale));
                   <span aria-hidden="true"> · </span>
                   <FormattedDate date={eventDate} locale={locale} />
                 </p>
-                <h2 class="entry__title">
-                  <span>{title}</span>
-                </h2>
-                <div class="entry__abstract prose">
-                  <Content />
-                </div>
-              </a>
+                <Fragment slot="title">{title}</Fragment>
+                <p
+                  slot="content"
+                  class="text-ink-muted m-0 max-w-[44em] text-[1.025rem]"
+                >
+                  {description}
+                </p>
+              </CardLink>
             </li>
           );
         })
@@ -74,84 +74,3 @@ const otherHref = localeTalks(otherLocale(locale));
     </ol>
   </section>
 </BaseLayout>
-
-<style>
-  .listing__title {
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-weight: 500;
-    font-size: 1.5rem;
-    margin: 0 0 1.25rem;
-    color: var(--color-fg);
-    border-bottom: 1px solid var(--color-rule);
-    padding-bottom: 0.5rem;
-  }
-
-  .entries {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  .entry {
-    padding: 1.5rem 0;
-    border-bottom: 1px solid var(--color-rule);
-  }
-
-  .entry:last-child {
-    border-bottom: none;
-  }
-
-  .entry__link {
-    display: block;
-    text-decoration: none;
-    color: inherit;
-  }
-
-  .entry__meta {
-    font-family: var(--font-sans);
-    font-size: 0.72rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    color: var(--color-fg-subtle);
-    margin: 0 0 0.45rem;
-  }
-
-  .entry__title {
-    font-family: var(--font-serif);
-    font-weight: 500;
-    font-size: clamp(1.4rem, 3vw, 1.875rem);
-    letter-spacing: -0.01em;
-    line-height: 1.2;
-    margin: 0 0 0.6rem;
-    color: var(--color-fg);
-  }
-
-  .entry__link:hover .entry__title span {
-    background-image: linear-gradient(
-      var(--color-highlight),
-      var(--color-highlight)
-    );
-    background-size: 100% 0.3em;
-    background-position: 0 85%;
-    background-repeat: no-repeat;
-    -webkit-box-decoration-break: clone;
-    box-decoration-break: clone;
-  }
-
-  .entry__abstract {
-    color: var(--color-fg-muted);
-    max-width: 44em;
-  }
-
-  .entry__abstract p {
-    margin: 0 0 0.75rem;
-    font-size: 1.025rem;
-    line-height: 1.55;
-  }
-
-  .entry__abstract p:last-child {
-    margin-bottom: 0;
-  }
-</style>

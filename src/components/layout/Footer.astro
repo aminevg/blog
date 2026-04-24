@@ -3,6 +3,7 @@ import type { Locale } from "~/config/site";
 import { SITE } from "~/config/site";
 import { t } from "~/i18n/ui";
 import { rssUrl } from "~/lib/paths";
+import NavLink from "~/components/ui/NavLink.astro";
 
 export interface Props {
   locale: Locale;
@@ -14,52 +15,16 @@ const xHref = `https://x.com/${SITE.social.x}`;
 const githubHref = `https://github.com/${SITE.social.github}`;
 ---
 
-<footer class="footer">
-  <nav class="footer__nav" aria-label="Social and syndication">
-    <a href={xHref} target="_blank" rel="me noopener">X</a>
-    <span aria-hidden="true">·</span>
-    <a href={githubHref} target="_blank" rel="me noopener">GitHub</a>
-    <span aria-hidden="true">·</span>
-    <a href={rssUrl(locale)}>{strings.feed.rss}</a>
+<footer class="border-rule text-ink-muted kicker mt-16 border-t pt-6">
+  <nav
+    class="flex flex-wrap items-baseline gap-[0.65rem]"
+    aria-label="Social and syndication"
+  >
+    <NavLink href={xHref} target="_blank" rel="me noopener">X</NavLink>
+    <span class="text-ink-subtle" aria-hidden="true">·</span>
+    <NavLink href={githubHref} target="_blank" rel="me noopener">GitHub</NavLink
+    >
+    <span class="text-ink-subtle" aria-hidden="true">·</span>
+    <NavLink href={rssUrl(locale)}>{strings.feed.rss}</NavLink>
   </nav>
 </footer>
-
-<style>
-  .footer {
-    margin-top: 4rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--color-rule);
-    font-family: var(--font-sans);
-    font-size: 0.72rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    color: var(--color-fg-muted);
-  }
-
-  .footer__nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.65rem;
-    align-items: baseline;
-  }
-
-  .footer__nav a {
-    text-decoration: none;
-    color: var(--color-fg-muted);
-    border-bottom: 1px solid transparent;
-    padding-bottom: 0.1rem;
-    transition:
-      color 160ms,
-      border-color 160ms;
-  }
-
-  .footer__nav a:hover {
-    color: var(--color-fg);
-    border-bottom-color: var(--color-fg);
-  }
-
-  .footer__nav span {
-    color: var(--color-fg-subtle);
-  }
-</style>

@@ -2,6 +2,7 @@
 import type { GetStaticPaths } from "astro";
 import { getEntry, render } from "astro:content";
 import BaseLayout from "~/layouts/BaseLayout.astro";
+import Link from "~/components/ui/Link.astro";
 import { SITE } from "~/config/site";
 import type { Locale } from "~/config/site";
 import { otherLocale } from "~/i18n/ui";
@@ -36,109 +37,14 @@ const { Content } = await render(entry);
   xDefaultUrl={localeAbout("en")}
   ogImage={`/open-graph/${locale}/about.png`}
 >
-  <article class="prose">
-    <header class="prose__header">
-      <h1>{entry.data.title}</h1>
+  <article class="tufte-prose">
+    <header class="mb-10">
+      <h1
+        class="text-standing-title text-ink m-0 font-serif leading-[1.15] font-medium tracking-[-0.01em] italic"
+      >
+        {entry.data.title}
+      </h1>
     </header>
-    <Content />
+    <Content components={{ a: Link }} />
   </article>
 </BaseLayout>
-
-<style is:global>
-  .prose {
-    font-family: var(--font-serif);
-    font-size: 1.1875rem;
-    line-height: 1.65;
-    color: var(--color-fg);
-  }
-
-  .prose__header {
-    margin-bottom: 2.5rem;
-  }
-
-  .prose h1 {
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-weight: 500;
-    font-size: clamp(2rem, 5vw, 2.75rem);
-    letter-spacing: -0.01em;
-    line-height: 1.15;
-    color: var(--color-fg);
-    margin: 0;
-  }
-
-  .prose h2 {
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-weight: 500;
-    font-size: 1.5rem;
-    margin: 2.5rem 0 0.75rem;
-    color: var(--color-fg);
-  }
-
-  .prose h3 {
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-weight: 500;
-    font-size: 1.25rem;
-    margin: 2rem 0 0.5rem;
-    color: var(--color-fg);
-  }
-
-  .prose p {
-    margin: 0 0 1.25rem;
-    max-width: 34rem;
-  }
-
-  .prose a {
-    color: inherit;
-    text-decoration: underline;
-    text-decoration-color: var(--color-rule);
-    text-underline-offset: 0.2em;
-  }
-
-  .prose a:hover {
-    color: var(--color-accent);
-    text-decoration-color: var(--color-accent);
-  }
-
-  .prose strong {
-    font-weight: 600;
-    color: var(--color-fg);
-  }
-
-  .prose code {
-    font-family: var(--font-mono);
-    font-size: 0.9em;
-    background: var(--color-surface);
-    padding: 0 0.25em;
-    border-radius: 2px;
-  }
-
-  .prose ul,
-  .prose ol {
-    margin: 0 0 1.25rem;
-    padding-left: 1.25rem;
-    max-width: 34rem;
-  }
-
-  .prose li {
-    margin-bottom: 0.375rem;
-    line-height: 1.6;
-  }
-
-  .prose blockquote {
-    border-left: 2px solid var(--color-rule);
-    padding-left: 1.25rem;
-    font-style: italic;
-    color: var(--color-fg-muted);
-    margin: 1.5rem 0;
-    max-width: 34rem;
-  }
-
-  .prose hr {
-    border: none;
-    border-top: 1px solid var(--color-rule);
-    margin: 3rem 0;
-  }
-</style>

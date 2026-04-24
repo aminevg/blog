@@ -23,7 +23,7 @@ export const expressiveCodeOptions: AstroExpressiveCodeOptions = {
     uiFontWeight: "500",
     frames: {
       frameBoxShadowCssValue: "none",
-      editorActiveTabIndicatorTopColor: "var(--color-accent)",
+      editorActiveTabIndicatorTopColor: "var(--color-oxblood)",
       editorActiveTabIndicatorBottomColor: "transparent",
       editorTabBarBackground: "var(--color-surface)",
       editorBackground: "var(--color-surface)",

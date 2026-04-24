@@ -1,0 +1,32 @@
+---
+import Link from "~/components/ui/Link.astro";
+import type { HTMLAttributes } from "astro/types";
+
+// "nav"    — footer, home view-all: muted base, hover flips text + border to ink.
+// "subtle" — masthead primary nav: inherits color, hover adds ink border;
+//            aria-current=page flips text to ink and border to oxblood.
+// "accent" — post backlink: muted base, hover flips text + border to oxblood.
+type Variant = "nav" | "subtle" | "accent";
+
+type Props = HTMLAttributes<"a"> & { variant?: Variant };
+
+const { variant = "nav", class: className, ...rest } = Astro.props;
+
+const variantClasses: Record<Variant, string> = {
+  nav: "text-ink-muted hover:text-ink hover:border-ink",
+  subtle:
+    "hover:border-ink aria-[current=page]:text-ink aria-[current=page]:border-oxblood",
+  accent: "text-ink-muted hover:text-oxblood hover:border-oxblood",
+};
+---
+
+<Link
+  {...rest}
+  class:list={[
+    "pb-hairline border-b border-transparent no-underline transition-colors duration-150",
+    variantClasses[variant],
+    className,
+  ]}
+>
+  <slot />
+</Link>

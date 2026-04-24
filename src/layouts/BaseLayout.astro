@@ -48,76 +48,20 @@ const {
     <Font cssVariable="--font-sans-web" preload />
     {locale === "ja" && <Font cssVariable="--font-serif-jp" preload />}
   </Head>
-  <body>
-    <a href="#main" class="skip-link">Skip to content</a>
-    <div class="page">
+  <body
+    class="accent-oxblood selection:bg-highlight selection:text-ink min-h-screen antialiased"
+  >
+    <a
+      href="#main"
+      class="bg-oxblood text-paper absolute top-0 -left-[9999px] z-[100] px-4 py-2 font-sans focus-visible:top-4 focus-visible:left-4"
+      >Skip to content</a
+    >
+    <div class="px-page-x pt-page-y mx-auto max-w-[60rem] pb-12">
       <Masthead locale={locale} otherLocaleHref={alternateUrl} />
-      <main id="main" class="page__main">
+      <main id="main" class="min-h-[40vh]">
         <slot />
       </main>
       <Footer locale={locale} />
     </div>
-    <script is:inline>
-      // On wide viewports CSS reveals every sidenote, so aria-expanded must
-      // mirror that or AT users hear "collapsed" while the note is on screen.
-      (() => {
-        const mql = window.matchMedia("(min-width: 62rem)");
-        const syncAria = () => {
-          const wide = mql.matches;
-          document.querySelectorAll(".sidenote__ref").forEach((btn) => {
-            if (wide) {
-              btn.setAttribute("aria-expanded", "true");
-              return;
-            }
-            const sn = btn.closest(".sidenote");
-            const opened = sn?.classList.contains("is-open") ?? false;
-            btn.setAttribute("aria-expanded", opened ? "true" : "false");
-          });
-        };
-        const toggle = (e) => {
-          if (mql.matches) return;
-          const btn = e.target.closest(".sidenote__ref");
-          if (!btn) return;
-          const sn = btn.closest(".sidenote");
-          if (!sn) return;
-          sn.classList.toggle("is-open");
-          btn.setAttribute(
-            "aria-expanded",
-            sn.classList.contains("is-open") ? "true" : "false",
-          );
-        };
-        syncAria();
-        mql.addEventListener("change", syncAria);
-        document.addEventListener("click", toggle);
-      })();
-    </script>
-
-    <style>
-      .skip-link {
-        position: absolute;
-        left: -9999px;
-        top: 0;
-        background: var(--color-accent);
-        color: var(--color-bg);
-        padding: 0.5rem 1rem;
-        font-family: var(--font-sans);
-        z-index: 100;
-      }
-
-      .skip-link:focus-visible {
-        left: 1rem;
-        top: 1rem;
-      }
-
-      .page {
-        max-width: 60rem;
-        margin: 0 auto;
-        padding: clamp(2.5rem, 5vw, 4rem) clamp(1.25rem, 4vw, 2rem) 3rem;
-      }
-
-      .page__main {
-        min-height: 40vh;
-      }
-    </style>
   </body>
 </html>

@@ -3,6 +3,8 @@ import type { GetStaticPaths } from "astro";
 import { getCollection, render } from "astro:content";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import FormattedDate from "~/components/ui/FormattedDate.astro";
+import Link from "~/components/ui/Link.astro";
+import NavLink from "~/components/ui/NavLink.astro";
 import type { Locale } from "~/config/site";
 import { t, otherLocale } from "~/i18n/ui";
 import { postSlug, postExists, type PostEntry } from "~/lib/content";
@@ -54,27 +56,39 @@ const {
   ogImage={`/open-graph/${locale}/blog/${slug}.png`}
   article={{ publishedTime: pubDate, modifiedTime: updatedDate }}
 >
-  <p class="backlink">
-    <a href={localeBlog(locale)}>← {strings.post.backToBlog}</a>
+  <p class="kicker mb-6">
+    <NavLink variant="accent" href={localeBlog(locale)}
+      >← {strings.post.backToBlog}</NavLink
+    >
   </p>
 
-  <article class="post">
-    <header class="post__header">
-      <p class="post__kicker">
+  <article class="relative [counter-reset:sidenote]">
+    <header class="mb-8">
+      <p class="text-ink-subtle kicker mb-3">
         <FormattedDate date={pubDate} locale={locale} />
       </p>
-      <h1 class="post__title">{title}</h1>
-      <p class="post__lede">{description}</p>
+      <h1
+        class="text-display text-ink mb-4 font-serif leading-[1.05] font-medium tracking-[-0.01em] italic"
+      >
+        {title}
+      </h1>
+      <p
+        class="text-ink-muted m-0 max-w-[44em] font-serif text-xl leading-[1.5]"
+      >
+        {description}
+      </p>
     </header>
 
-    <div class="post__body prose">
-      <Content />
+    <div class="tufte-prose relative max-w-[32rem]">
+      <Content components={{ a: Link }} />
     </div>
 
-    <footer class="post__footer">
+    <footer
+      class="border-rule text-ink-muted mt-12 max-w-[32rem] border-t pt-5 font-serif text-[0.95rem] italic"
+    >
       {
         updatedDate && (
-          <p>
+          <p class="my-[0.35rem]">
             {strings.post.updated}{" "}
             <FormattedDate date={updatedDate} locale={locale} />
           </p>
@@ -82,183 +96,19 @@ const {
       }
       {
         canonicalUrl && (
-          <p>
+          <p class="my-[0.35rem]">
             {strings.post.firstPublishedOn}{" "}
-            <a href={canonicalUrl.toString()} rel="canonical">
+            <Link
+              href={canonicalUrl.toString()}
+              rel="canonical"
+              class="decoration-rule hover:decoration-oxblood hover:text-oxblood underline"
+            >
               {canonicalSource ?? new URL(canonicalUrl.toString()).host}{" "}
               <span aria-hidden="true">↗</span>
-            </a>
+            </Link>
           </p>
         )
       }
     </footer>
   </article>
 </BaseLayout>
-
-<style is:global>
-  .backlink {
-    font-family: var(--font-sans);
-    font-size: 0.72rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    margin: 0 0 1.5rem;
-  }
-
-  .backlink a {
-    color: var(--color-fg-muted);
-    text-decoration: none;
-    border-bottom: 1px solid transparent;
-    padding-bottom: 0.1rem;
-    transition:
-      color 160ms,
-      border-color 160ms;
-  }
-
-  .backlink a:hover {
-    color: var(--color-accent);
-    border-bottom-color: var(--color-accent);
-  }
-
-  .post {
-    counter-reset: sidenote;
-    position: relative;
-  }
-
-  .post__header {
-    margin-bottom: 2rem;
-  }
-
-  .post__kicker {
-    font-family: var(--font-sans);
-    font-size: 0.72rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    color: var(--color-fg-subtle);
-    margin: 0 0 0.75rem;
-  }
-
-  .post__title {
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-weight: 500;
-    font-size: clamp(2.25rem, 5vw, 3.5rem);
-    letter-spacing: -0.01em;
-    line-height: 1.05;
-    color: var(--color-fg);
-    margin: 0 0 1rem;
-  }
-
-  .post__lede {
-    font-family: var(--font-serif);
-    font-size: 1.25rem;
-    line-height: 1.5;
-    color: var(--color-fg-muted);
-    max-width: 44em;
-    margin: 0;
-  }
-
-  .post__body {
-    max-width: 32rem;
-    position: relative;
-  }
-
-  .post__footer {
-    margin-top: 3rem;
-    padding-top: 1.25rem;
-    border-top: 1px solid var(--color-rule);
-    font-family: var(--font-serif);
-    font-style: italic;
-    color: var(--color-fg-muted);
-    font-size: 0.95rem;
-    max-width: 32rem;
-  }
-
-  .post__footer p {
-    margin: 0.35rem 0;
-  }
-
-  .post__footer a {
-    color: var(--color-fg-muted);
-    text-decoration: underline;
-    text-decoration-color: var(--color-rule);
-  }
-
-  .post__footer a:hover {
-    color: var(--color-accent);
-    text-decoration-color: var(--color-accent);
-  }
-
-  .prose p {
-    margin: 0 0 1.25rem;
-  }
-
-  .prose h2 {
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-weight: 500;
-    font-size: 1.5rem;
-    margin: 2.5rem 0 0.75rem;
-    color: var(--color-fg);
-  }
-
-  .prose h3 {
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-weight: 500;
-    font-size: 1.25rem;
-    margin: 2rem 0 0.5rem;
-    color: var(--color-fg);
-  }
-
-  .prose a {
-    color: inherit;
-    text-decoration: underline;
-    text-decoration-color: var(--color-rule);
-    text-underline-offset: 0.2em;
-  }
-
-  .prose a:hover {
-    color: var(--color-accent);
-    text-decoration-color: var(--color-accent);
-  }
-
-  .prose strong {
-    font-weight: 600;
-    color: var(--color-fg);
-  }
-
-  .prose blockquote {
-    border-left: 2px solid var(--color-rule);
-    padding-left: 1.25rem;
-    font-style: italic;
-    color: var(--color-fg-muted);
-    margin: 1.5rem 0;
-  }
-
-  .prose hr {
-    border: none;
-    border-top: 1px solid var(--color-rule);
-    margin: 2.5rem 0;
-  }
-
-  .prose ul,
-  .prose ol {
-    margin: 0 0 1.25rem;
-    padding-left: 1.25rem;
-  }
-
-  .prose li {
-    margin-bottom: 0.375rem;
-    line-height: 1.6;
-  }
-
-  .prose :not(pre) > code {
-    font-family: var(--font-mono);
-    font-size: 0.9em;
-    background: var(--color-surface);
-    padding: 0 0.25em;
-    border-radius: 2px;
-  }
-</style>

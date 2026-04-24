@@ -2,6 +2,8 @@
 import type { GetStaticPaths } from "astro";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import FormattedDate from "~/components/ui/FormattedDate.astro";
+import CardLink from "~/components/ui/CardLink.astro";
+import NavLink from "~/components/ui/NavLink.astro";
 import { SITE } from "~/config/site";
 import type { Locale } from "~/config/site";
 import { t, otherLocale } from "~/i18n/ui";
@@ -29,6 +31,11 @@ const preamble =
   locale === "en"
     ? "Writing here is infrequent and unhurried. Each piece is a set of notes I wanted to keep — on running systems in production, on the shape of teams that build platforms, on the long hours between Paris and Tokyo."
     : "ここでの文章は頻度も速度もゆるやかです。プロダクションでシステムを運用するということ、プラットフォームを作るチームのかたち、そしてパリと東京のあいだで過ぎていく長い時間について、手元に残しておきたかったメモを置いています。";
+
+const sectionTitle =
+  "text-ink border-rule mb-5 border-b pb-2 font-serif text-2xl font-medium italic";
+const entryMeta = "text-ink-subtle kicker mb-[0.45rem]";
+const entryDescription = "text-ink-muted m-0 max-w-[44em] text-[1.025rem]";
 ---
 
 <BaseLayout
@@ -39,39 +46,42 @@ const preamble =
   xDefaultUrl={localeHome("en")}
   ogImage={`/open-graph/${locale}/home.png`}
 >
-  <h1 class="visually-hidden">{SITE.title}</h1>
-  <section class="preamble">
-    <p><em>{preamble}</em></p>
+  <h1 class="sr-only">{SITE.title}</h1>
+  <section class="mb-12">
+    <p class="text-ink-muted m-0 max-w-[32rem] text-[1.125rem]">
+      <em>{preamble}</em>
+    </p>
   </section>
 
   {
     posts.length > 0 && (
-      <section class="home-section">
-        <h2 class="home-section__title">{strings.home.latestPosts}</h2>
-        <ol class="entries">
+      <section class="mb-12">
+        <p class={sectionTitle}>{strings.home.latestPosts}</p>
+        <ol class="m-0 list-none p-0">
           {posts.map((entry) => {
             const slug = postSlug(entry);
             return (
-              <li class="entry">
-                <a
+              <li class="border-rule border-b py-5 last:border-b-0">
+                <CardLink
                   href={postUrl(locale, slug)}
-                  class="entry__link"
                   aria-label={entry.data.title}
                 >
-                  <p class="entry__meta">
+                  <p slot="meta" class={entryMeta}>
                     <FormattedDate date={entry.data.pubDate} locale={locale} />
                   </p>
-                  <h3 class="entry__title">
-                    <span>{entry.data.title}</span>
-                  </h3>
-                  <p class="entry__description">{entry.data.description}</p>
-                </a>
+                  <Fragment slot="title">{entry.data.title}</Fragment>
+                  <p slot="content" class={entryDescription}>
+                    {entry.data.description}
+                  </p>
+                </CardLink>
               </li>
             );
           })}
         </ol>
-        <p class="home-section__more">
-          <a href={localeBlog(locale)}>→ {strings.home.viewAllPosts}</a>
+        <p class="kicker m-0 mt-4">
+          <NavLink href={localeBlog(locale)}>
+            → {strings.home.viewAllPosts}
+          </NavLink>
         </p>
       </section>
     )
@@ -79,22 +89,21 @@ const preamble =
 
   {
     talks.length > 0 && (
-      <section class="home-section">
-        <h2 class="home-section__title">{strings.home.latestTalks}</h2>
-        <ol class="entries">
+      <section class="mb-12">
+        <p class={sectionTitle}>{strings.home.latestTalks}</p>
+        <ol class="m-0 list-none p-0">
           {talks.map((entry) => {
             const { title, description, event, eventDate, venue, slidesUrl } =
               entry.data;
             return (
-              <li class="entry">
-                <a
+              <li class="border-rule border-b py-5 last:border-b-0">
+                <CardLink
                   href={slidesUrl}
-                  class="entry__link"
                   target="_blank"
                   rel="noopener"
                   aria-label={title}
                 >
-                  <p class="entry__meta">
+                  <p slot="meta" class={entryMeta}>
                     <span>{event}</span>
                     {venue && (
                       <>
@@ -105,131 +114,21 @@ const preamble =
                     <span aria-hidden="true"> · </span>
                     <FormattedDate date={eventDate} locale={locale} />
                   </p>
-                  <h3 class="entry__title">
-                    <span>{title}</span>
-                  </h3>
-                  <p class="entry__description">{description}</p>
-                </a>
+                  <Fragment slot="title">{title}</Fragment>
+                  <p slot="content" class={entryDescription}>
+                    {description}
+                  </p>
+                </CardLink>
               </li>
             );
           })}
         </ol>
-        <p class="home-section__more">
-          <a href={localeTalks(locale)}>→ {strings.home.viewAllTalks}</a>
+        <p class="kicker m-0 mt-4">
+          <NavLink href={localeTalks(locale)}>
+            → {strings.home.viewAllTalks}
+          </NavLink>
         </p>
       </section>
     )
   }
 </BaseLayout>
-
-<style>
-  .preamble {
-    margin: 0 0 3rem;
-  }
-
-  .preamble p {
-    max-width: 32rem;
-    color: var(--color-fg-muted);
-    font-size: 1.125rem;
-    margin: 0;
-  }
-
-  .home-section {
-    margin: 0 0 3rem;
-  }
-
-  .home-section__title {
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-weight: 500;
-    font-size: 1.5rem;
-    margin: 0 0 1.25rem;
-    color: var(--color-fg);
-    border-bottom: 1px solid var(--color-rule);
-    padding-bottom: 0.5rem;
-  }
-
-  .home-section__more {
-    font-family: var(--font-sans);
-    font-size: 0.72rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    margin: 1rem 0 0;
-  }
-
-  .home-section__more a {
-    color: var(--color-fg-muted);
-    text-decoration: none;
-    border-bottom: 1px solid transparent;
-    padding-bottom: 0.1rem;
-    transition:
-      color 160ms,
-      border-color 160ms;
-  }
-
-  .home-section__more a:hover {
-    color: var(--color-fg);
-    border-bottom-color: var(--color-fg);
-  }
-
-  .entries {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  .entry {
-    padding: 1.25rem 0;
-    border-bottom: 1px solid var(--color-rule);
-  }
-
-  .entry:last-child {
-    border-bottom: none;
-  }
-
-  .entry__link {
-    display: block;
-    text-decoration: none;
-    color: inherit;
-  }
-
-  .entry__meta {
-    font-family: var(--font-sans);
-    font-size: 0.72rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    color: var(--color-fg-subtle);
-    margin: 0 0 0.45rem;
-  }
-
-  .entry__title {
-    font-family: var(--font-serif);
-    font-weight: 500;
-    font-size: clamp(1.25rem, 2.5vw, 1.625rem);
-    letter-spacing: -0.01em;
-    line-height: 1.25;
-    margin: 0 0 0.45rem;
-    color: var(--color-fg);
-  }
-
-  .entry__link:hover .entry__title span {
-    background-image: linear-gradient(
-      var(--color-highlight),
-      var(--color-highlight)
-    );
-    background-size: 100% 0.3em;
-    background-position: 0 85%;
-    background-repeat: no-repeat;
-    -webkit-box-decoration-break: clone;
-    box-decoration-break: clone;
-  }
-
-  .entry__description {
-    font-size: 1rem;
-    color: var(--color-fg-muted);
-    margin: 0;
-    max-width: 44em;
-  }
-</style>
