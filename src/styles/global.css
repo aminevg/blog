@@ -16,88 +16,157 @@
     monospace;
 
   /* Light mode (primary) — warm cream paper. */
-  --color-bg: #fdf9f0;
-  --color-fg: #161311;
-  --color-fg-muted: #5a524a;
-  --color-fg-subtle: #8f857b;
+  --color-paper: #fdf9f0;
+  --color-ink: #161311;
+  --color-ink-muted: #5a524a;
+  --color-ink-subtle: #8f857b;
   --color-rule: #c9bfad;
-  --color-accent: #7a1a1a;
+  --color-oxblood: #7a1a1a;
   --color-highlight: rgba(237, 214, 157, 0.55);
   --color-surface: #f3ecd9;
+
+  /* Fluid display sizes — typography scales with viewport, not breakpoints. */
+  --text-hero: clamp(2.75rem, 6vw, 4.5rem);
+  --text-display: clamp(2.25rem, 5vw, 3.5rem);
+  --text-page-title: clamp(2rem, 5vw, 3rem);
+  --text-standing-title: clamp(2rem, 5vw, 2.75rem);
+  --text-entry-title: clamp(1.4rem, 3vw, 1.875rem);
+
+  /* Fluid page padding for the outer wrapper. */
+  --spacing-page-y: clamp(2.5rem, 5vw, 4rem);
+  --spacing-page-x: clamp(1.25rem, 4vw, 2rem);
+
+  /* Wipe Tailwind's default breakpoints — the site is fluid and uses one
+     bespoke layout threshold. Removing defaults makes accidental `md:...`
+     fail at build time. */
+  --breakpoint-*: initial;
+  --breakpoint-desktop: 62rem;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-bg: #1a1614;
-    --color-fg: #e8e1d0;
-    --color-fg-muted: #a89f8d;
-    --color-fg-subtle: #756e5f;
+    --color-paper: #1a1614;
+    --color-ink: #e8e1d0;
+    --color-ink-muted: #a89f8d;
+    --color-ink-subtle: #756e5f;
     --color-rule: #3a332d;
-    --color-accent: #c77670;
+    --color-oxblood: #c77670;
     --color-highlight: rgba(237, 214, 157, 0.18);
     --color-surface: #231e1a;
   }
 }
 
 /* -----------------------------------------------------------------------------
-   Base element styling — serif body, old-style figures, synthesized bold.
+   Base element styling — serif body, old-style figures.
    ----------------------------------------------------------------------------- */
-html {
-  background-color: var(--color-bg);
-  color: var(--color-fg);
-  font-family: var(--font-serif);
-  font-feature-settings: "kern", "liga", "calt", "onum";
-  font-variant-numeric: oldstyle-nums;
-  font-synthesis: weight;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@layer base {
+  html {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-serif);
+    font-feature-settings: "kern", "liga", "calt", "onum";
+    font-variant-numeric: oldstyle-nums;
+    text-rendering: optimizeLegibility;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  a:hover {
+    color: var(--color-oxblood);
+  }
 }
 
-body {
-  min-height: 100vh;
-  font-size: 1.1875rem;
-  line-height: 1.6;
-  accent-color: var(--color-accent);
+/* Universal keyboard-focus ring — applied via the Link component to every
+   anchor, and manually on other interactive elements (currently only the
+   Sidenote button). */
+@utility focus-ring {
+  &:focus-visible {
+    outline: 2px solid var(--color-oxblood);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
 }
 
-a {
-  color: inherit;
-}
+/* -----------------------------------------------------------------------------
+   Shared prose styling — used by post body and about page. `:where()` zeros
+   element-selector specificity so per-element utility overrides win without
+   `!important`. Link colors/hover come via the MDX `{ a: Link }` remap; this
+   block handles only text-decoration for anchors.
+   ----------------------------------------------------------------------------- */
+@layer components {
+  .tufte-prose {
+    font-size: 1.125rem;
+    line-height: 1.6;
+  }
 
-a:hover {
-  color: var(--color-accent);
-}
+  .tufte-prose :where(p) {
+    margin: 0 0 1.25rem;
+  }
 
-::selection {
-  background-color: var(--color-highlight);
-  color: var(--color-fg);
-}
+  .tufte-prose :where(h2) {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 1.5rem;
+    margin: 2.5rem 0 0.75rem;
+    color: var(--color-ink);
+  }
 
-/* Focus ring — consistent across all interactive elements. */
-:where(
-  a,
-  button,
-  [role="button"],
-  input,
-  select,
-  textarea,
-  summary
-):focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-  border-radius: 2px;
-}
+  .tufte-prose :where(h3) {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 1.25rem;
+    margin: 2rem 0 0.5rem;
+    color: var(--color-ink);
+  }
 
-/* Visually hide an element while keeping it discoverable by assistive tech. */
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+  .tufte-prose :where(a) {
+    text-decoration: underline;
+    text-decoration-color: var(--color-rule);
+    text-underline-offset: 0.2em;
+  }
+
+  .tufte-prose :where(a):hover {
+    text-decoration-color: var(--color-oxblood);
+  }
+
+  .tufte-prose :where(strong) {
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  .tufte-prose :where(blockquote) {
+    border-left: 2px solid var(--color-rule);
+    padding-left: 1.25rem;
+    font-style: italic;
+    color: var(--color-ink-muted);
+    margin: 1.5rem 0;
+  }
+
+  .tufte-prose :where(hr) {
+    border: none;
+    border-top: 1px solid var(--color-rule);
+    margin: 2.5rem 0;
+  }
+
+  .tufte-prose :where(ul, ol) {
+    margin: 0 0 1.25rem;
+    padding-left: 1.25rem;
+  }
+
+  .tufte-prose :where(li) {
+    margin-bottom: 0.375rem;
+    line-height: 1.6;
+  }
+
+  .tufte-prose :where(:not(pre) > code) {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    background: var(--color-surface);
+    padding: 0 0.25em;
+    border-radius: 2px;
+  }
 }

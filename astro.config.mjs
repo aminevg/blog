@@ -32,7 +32,7 @@ export default defineConfig({
       provider: fontProviders.fontsource(),
       name: "EB Garamond",
       cssVariable: "--font-serif-web",
-      weights: [400, 500],
+      weights: [400, 500, 600],
       styles: ["normal", "italic"],
       subsets: ["latin", "latin-ext"],
       formats: ["woff2", "ttf"],

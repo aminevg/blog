@@ -1,0 +1,24 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+type Props = HTMLAttributes<"a">;
+
+const { class: className, ...rest } = Astro.props;
+---
+
+<a
+  {...rest}
+  class:list={["group/card block text-inherit no-underline", className]}
+>
+  <slot name="meta" />
+  <h2
+    class="text-entry-title text-ink mb-[0.45rem] font-serif leading-[1.2] font-medium tracking-[-0.01em]"
+  >
+    <span
+      class="group-hover/card:from-highlight group-hover/card:to-highlight group-hover/card:bg-linear-to-b group-hover/card:box-decoration-clone group-hover/card:bg-size-[100%_0.3em] group-hover/card:bg-position-[0_85%] group-hover/card:bg-no-repeat"
+    >
+      <slot name="title" />
+    </span>
+  </h2>
+  <slot name="content" />
+</a>

@@ -1,25 +1,5 @@
----
-
----
-
-<aside class="callout">
+<aside
+  class="border-rule text-ink-muted my-7 border-l-2 py-1 pl-5 italic [&>:first-child]:mt-0 [&>:last-child]:mb-0"
+>
   <slot />
 </aside>
-
-<style>
-  .callout {
-    margin: 1.75rem 0;
-    padding: 0.25rem 0 0.25rem 1.25rem;
-    border-left: 2px solid var(--color-rule);
-    font-style: italic;
-    color: var(--color-fg-muted);
-  }
-
-  .callout :global(> :first-child) {
-    margin-top: 0;
-  }
-
-  .callout :global(> :last-child) {
-    margin-bottom: 0;
-  }
-</style>

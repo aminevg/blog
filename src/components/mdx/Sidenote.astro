@@ -1,97 +1,47 @@
 ---
 // Uses <button> + <span> (both phrasing content) because <details> would be
 // closed out of any enclosing <p> by the HTML parser and drop out of its
-// sentence. BaseLayout's inline script toggles `is-open` on narrow viewports.
+// sentence. On narrow viewports the script below toggles `is-open` on the
+// root to reveal the body; on wide viewports the body floats into the gutter.
 ---
 
-<span class="sidenote"
+<span data-sidenote-root class="group relative [counter-increment:sidenote]"
   ><button
     type="button"
-    class="sidenote__ref"
     aria-label="Sidenote"
-    aria-expanded="false"><sup></sup></button
-  ><span class="sidenote__body" role="note"><sup></sup> <slot /></span></span
+    aria-expanded="false"
+    class="text-oxblood desktop:pointer-events-none focus-ring inline cursor-pointer appearance-none border-0 bg-transparent p-0 font-[inherit]"
+    ><sup
+      class="[font-feature-settings:'sups'] text-xs before:content-[counter(sidenote)]"
+    ></sup></button
+  ><span
+    role="note"
+    class="border-rule text-ink-muted max-desktop:group-[.is-open]:block desktop:float-right desktop:clear-right desktop:m-0 desktop:mb-2 desktop:-mr-84 desktop:block desktop:w-72 desktop:border-l desktop:border-rule desktop:bg-transparent desktop:p-0 desktop:pl-4 desktop:text-[0.9rem] my-3 hidden border-l-2 bg-[color-mix(in_oklab,var(--color-surface)_70%,transparent)] py-2 pl-4 font-serif text-[0.95rem] leading-[1.5] italic"
+    ><sup
+      class="text-oxblood mr-1 [font-feature-settings:'sups'] not-italic before:content-[counter(sidenote)]"
+    ></sup>
+    <slot /></span
+  ></span
 >
 
-<style is:global>
-  .sidenote {
-    counter-increment: sidenote;
-    position: relative;
-  }
+<script>
+  const mql = window.matchMedia("(min-width: 62rem)");
 
-  .sidenote__ref {
-    appearance: none;
-    margin: 0;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    color: var(--color-accent);
-    font: inherit;
-    cursor: pointer;
-    display: inline;
-  }
+  document.querySelectorAll("[data-sidenote-root]").forEach((root) => {
+    const btn = root.querySelector("button");
+    if (!btn) return;
 
-  .sidenote__ref sup {
-    font-feature-settings: "sups";
-    font-size: 0.75em;
-  }
+    const sync = () => {
+      const visible = mql.matches || root.classList.contains("is-open");
+      btn.setAttribute("aria-expanded", String(visible));
+    };
 
-  .sidenote__ref sup::before {
-    content: counter(sidenote);
-  }
+    btn.addEventListener("click", () => {
+      root.classList.toggle("is-open");
+      sync();
+    });
 
-  .sidenote__body {
-    display: block;
-    margin: 0.75rem 0;
-    padding: 0.5rem 0 0.5rem 1rem;
-    border-left: 2px solid var(--color-rule);
-    background: color-mix(in oklab, var(--color-surface) 70%, transparent);
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-size: 0.95rem;
-    line-height: 1.5;
-    color: var(--color-fg-muted);
-  }
-
-  .sidenote__body sup {
-    color: var(--color-accent);
-    margin-right: 0.3em;
-    font-style: normal;
-    font-feature-settings: "sups";
-  }
-
-  .sidenote__body sup::before {
-    content: counter(sidenote);
-  }
-
-  /* Narrow: body hidden by default, shown when sidenote is .is-open. */
-  @media (max-width: 61.99rem) {
-    .sidenote__body {
-      display: none;
-    }
-    .sidenote.is-open .sidenote__body {
-      display: block;
-    }
-  }
-
-  /* Wide: body floats into the right gutter, anchored to the line where the
-     superscript sits. The body column is 32rem; the float is 18rem with a
-     negative right-margin that pulls it past the column edge. The ref button
-     becomes inert since the body is already visible. */
-  @media (min-width: 62rem) {
-    .post__body .sidenote__body {
-      float: right;
-      clear: right;
-      width: 18rem;
-      margin: 0 -21rem 0.5rem 0;
-      padding: 0 0 0 1rem;
-      border-left: 1px solid var(--color-rule);
-      background: transparent;
-      font-size: 0.9rem;
-    }
-
-    .post__body .sidenote__ref {
-      pointer-events: none;
-    }
-  }
-</style>
+    mql.addEventListener("change", sync);
+    sync();
+  });
+</script>

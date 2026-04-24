@@ -1,10 +1,19 @@
 ---
 import BaseLayout from "~/layouts/BaseLayout.astro";
+import Link from "~/components/ui/Link.astro";
 import { t } from "~/i18n/ui";
 import { localeHome } from "~/lib/paths";
 
 const en = t("en").notFound;
 const ja = t("ja").notFound;
+
+const kicker =
+  "text-ink-subtle mb-3 font-sans text-[0.72rem] font-medium tracking-[0.14em] uppercase";
+const title =
+  "text-page-title text-ink mb-3 font-serif leading-[1.05] font-medium tracking-[-0.01em] italic";
+const body = "text-ink-muted m-0 mb-4 max-w-[32rem] text-lg";
+const ctaLink =
+  "decoration-rule hover:decoration-oxblood hover:text-oxblood underline";
 ---
 
 <BaseLayout
@@ -13,82 +22,27 @@ const ja = t("ja").notFound;
   description={en.body}
   alternateUrl={null}
 >
-  <section class="not-found" lang="en" aria-labelledby="not-found-title-en">
-    <p class="not-found__kicker">{en.kicker}</p>
-    <h1 id="not-found-title-en" class="not-found__title">{en.title}</h1>
-    <p class="not-found__body">
+  <section class="my-8" lang="en" aria-labelledby="not-found-title-en">
+    <p class={kicker}>{en.kicker}</p>
+    <h1 id="not-found-title-en" class={title}>{en.title}</h1>
+    <p class={body}>
       <em>{en.body}</em>
     </p>
-    <p class="not-found__cta">
-      <a href={localeHome("en")}>{en.home}</a>.
+    <p class="m-0 text-lg">
+      <Link href={localeHome("en")} class={ctaLink}>{en.home}</Link>.
     </p>
   </section>
 
-  <hr class="not-found__rule" />
+  <hr class="border-rule my-10 border-0 border-t" />
 
-  <section class="not-found" lang="ja" aria-labelledby="not-found-title-ja">
-    <p class="not-found__kicker">{ja.kicker}</p>
-    <h2 id="not-found-title-ja" class="not-found__title">{ja.title}</h2>
-    <p class="not-found__body">
+  <section class="my-8" lang="ja" aria-labelledby="not-found-title-ja">
+    <p class={kicker}>{ja.kicker}</p>
+    <h2 id="not-found-title-ja" class={title}>{ja.title}</h2>
+    <p class={body}>
       <em>{ja.body}</em>
     </p>
-    <p class="not-found__cta">
-      <a href={localeHome("ja")}>{ja.home}</a>
+    <p class="m-0 text-lg">
+      <Link href={localeHome("ja")} class={ctaLink}>{ja.home}</Link>
     </p>
   </section>
 </BaseLayout>
-
-<style>
-  .not-found {
-    margin: 2rem 0;
-  }
-
-  .not-found__kicker {
-    font-family: var(--font-sans);
-    font-size: 0.72rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    color: var(--color-fg-subtle);
-    margin: 0 0 0.75rem;
-  }
-
-  .not-found__title {
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-weight: 500;
-    font-size: clamp(2rem, 5vw, 3rem);
-    letter-spacing: -0.01em;
-    line-height: 1.05;
-    color: var(--color-fg);
-    margin: 0 0 0.75rem;
-  }
-
-  .not-found__body {
-    color: var(--color-fg-muted);
-    margin: 0 0 1rem;
-    max-width: 32rem;
-  }
-
-  .not-found__cta {
-    margin: 0;
-  }
-
-  .not-found__cta a {
-    color: inherit;
-    text-decoration: underline;
-    text-decoration-color: var(--color-rule);
-    text-underline-offset: 0.2em;
-  }
-
-  .not-found__cta a:hover {
-    color: var(--color-accent);
-    text-decoration-color: var(--color-accent);
-  }
-
-  .not-found__rule {
-    border: none;
-    border-top: 1px solid var(--color-rule);
-    margin: 2.5rem 0;
-  }
-</style>
