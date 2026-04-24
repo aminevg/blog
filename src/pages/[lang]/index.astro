@@ -3,7 +3,7 @@ import type { GetStaticPaths } from "astro";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import FormattedDate from "~/components/ui/FormattedDate.astro";
 import CardLink from "~/components/ui/CardLink.astro";
-import Link from "~/components/ui/Link.astro";
+import NavLink from "~/components/ui/NavLink.astro";
 import { SITE } from "~/config/site";
 import type { Locale } from "~/config/site";
 import { t, otherLocale } from "~/i18n/ui";
@@ -34,11 +34,8 @@ const preamble =
 
 const sectionTitle =
   "text-ink border-rule mb-5 border-b pb-2 font-serif text-2xl font-medium italic";
-const entryMeta =
-  "text-ink-subtle mb-[0.45rem] font-sans text-[0.72rem] font-medium tracking-[0.14em] uppercase";
+const entryMeta = "text-ink-subtle kicker mb-[0.45rem]";
 const entryDescription = "text-ink-muted m-0 max-w-[44em] text-[1.025rem]";
-const viewAllLink =
-  "text-ink-muted hover:text-ink hover:border-ink border-b border-transparent pb-[0.1rem] no-underline transition-colors duration-150";
 ---
 
 <BaseLayout
@@ -81,10 +78,10 @@ const viewAllLink =
             );
           })}
         </ol>
-        <p class="m-0 mt-4 font-sans text-[0.72rem] font-medium tracking-[0.14em] uppercase">
-          <Link href={localeBlog(locale)} class={viewAllLink}>
+        <p class="kicker m-0 mt-4">
+          <NavLink href={localeBlog(locale)}>
             → {strings.home.viewAllPosts}
-          </Link>
+          </NavLink>
         </p>
       </section>
     )
@@ -126,10 +123,10 @@ const viewAllLink =
             );
           })}
         </ol>
-        <p class="m-0 mt-4 font-sans text-[0.72rem] font-medium tracking-[0.14em] uppercase">
-          <Link href={localeTalks(locale)} class={viewAllLink}>
+        <p class="kicker m-0 mt-4">
+          <NavLink href={localeTalks(locale)}>
             → {strings.home.viewAllTalks}
-          </Link>
+          </NavLink>
         </p>
       </section>
     )

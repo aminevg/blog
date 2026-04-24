@@ -3,7 +3,7 @@ import type { Locale } from "~/config/site";
 import { SITE } from "~/config/site";
 import { t } from "~/i18n/ui";
 import { rssUrl } from "~/lib/paths";
-import Link from "~/components/ui/Link.astro";
+import NavLink from "~/components/ui/NavLink.astro";
 
 export interface Props {
   locale: Locale;
@@ -13,29 +13,18 @@ const { locale } = Astro.props;
 const strings = t(locale);
 const xHref = `https://x.com/${SITE.social.x}`;
 const githubHref = `https://github.com/${SITE.social.github}`;
-
-const footerAnchor =
-  "text-ink-muted hover:text-ink hover:border-ink border-b border-transparent pb-[0.1rem] no-underline transition-colors duration-150";
 ---
 
-<footer
-  class="border-rule text-ink-muted mt-16 border-t pt-6 font-sans text-[0.72rem] font-medium tracking-[0.14em] uppercase"
->
+<footer class="border-rule text-ink-muted kicker mt-16 border-t pt-6">
   <nav
     class="flex flex-wrap items-baseline gap-[0.65rem]"
     aria-label="Social and syndication"
   >
-    <Link href={xHref} target="_blank" rel="me noopener" class={footerAnchor}
-      >X</Link
+    <NavLink href={xHref} target="_blank" rel="me noopener">X</NavLink>
+    <span class="text-ink-subtle" aria-hidden="true">·</span>
+    <NavLink href={githubHref} target="_blank" rel="me noopener">GitHub</NavLink
     >
     <span class="text-ink-subtle" aria-hidden="true">·</span>
-    <Link
-      href={githubHref}
-      target="_blank"
-      rel="me noopener"
-      class={footerAnchor}>GitHub</Link
-    >
-    <span class="text-ink-subtle" aria-hidden="true">·</span>
-    <Link href={rssUrl(locale)} class={footerAnchor}>{strings.feed.rss}</Link>
+    <NavLink href={rssUrl(locale)}>{strings.feed.rss}</NavLink>
   </nav>
 </footer>

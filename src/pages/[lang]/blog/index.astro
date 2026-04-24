@@ -45,10 +45,7 @@ const otherHref = localeBlog(otherLocale(locale));
                 href={postUrl(locale, slug)}
                 aria-label={entry.data.title}
               >
-                <p
-                  slot="meta"
-                  class="text-ink-subtle mb-[0.45rem] font-sans text-[0.72rem] font-medium tracking-[0.14em] uppercase"
-                >
+                <p slot="meta" class="text-ink-subtle kicker mb-[0.45rem]">
                   <FormattedDate date={entry.data.pubDate} locale={locale} />
                 </p>
                 <Fragment slot="title">{entry.data.title}</Fragment>

@@ -4,6 +4,7 @@ import { getCollection, render } from "astro:content";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import FormattedDate from "~/components/ui/FormattedDate.astro";
 import Link from "~/components/ui/Link.astro";
+import NavLink from "~/components/ui/NavLink.astro";
 import type { Locale } from "~/config/site";
 import { t, otherLocale } from "~/i18n/ui";
 import { postSlug, postExists, type PostEntry } from "~/lib/content";
@@ -55,21 +56,15 @@ const {
   ogImage={`/open-graph/${locale}/blog/${slug}.png`}
   article={{ publishedTime: pubDate, modifiedTime: updatedDate }}
 >
-  <p
-    class="mb-6 font-sans text-[0.72rem] font-medium tracking-[0.14em] uppercase"
-  >
-    <Link
-      href={localeBlog(locale)}
-      class="text-ink-muted hover:text-oxblood hover:border-oxblood border-b border-transparent pb-[0.1rem] no-underline transition-colors duration-150"
-      >← {strings.post.backToBlog}</Link
+  <p class="kicker mb-6">
+    <NavLink variant="accent" href={localeBlog(locale)}
+      >← {strings.post.backToBlog}</NavLink
     >
   </p>
 
   <article class="relative [counter-reset:sidenote]">
     <header class="mb-8">
-      <p
-        class="text-ink-subtle mb-3 font-sans text-[0.72rem] font-medium tracking-[0.14em] uppercase"
-      >
+      <p class="text-ink-subtle kicker mb-3">
         <FormattedDate date={pubDate} locale={locale} />
       </p>
       <h1

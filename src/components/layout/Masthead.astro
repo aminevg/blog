@@ -4,6 +4,7 @@ import { SITE } from "~/config/site";
 import { t, otherLocale } from "~/i18n/ui";
 import { localeHome, localeBlog, localeTalks, localeAbout } from "~/lib/paths";
 import Link from "~/components/ui/Link.astro";
+import NavLink from "~/components/ui/NavLink.astro";
 
 export interface Props {
   locale: Locale;
@@ -30,9 +31,6 @@ const langLabel =
     ? strings.languageSwitcher.toEnglish
     : strings.languageSwitcher.toJapanese;
 const switcherHref = otherLocaleHref ?? localeHome(target);
-
-const navAnchor =
-  "hover:border-ink aria-[current=page]:text-ink aria-[current=page]:border-oxblood border-b border-transparent pb-[0.1rem] no-underline transition-colors duration-150";
 ---
 
 <header class="border-rule mb-8 border-b pb-8">
@@ -44,7 +42,7 @@ const navAnchor =
   </p>
   <p class="text-ink-muted mb-6 max-w-[34ch] text-xl"><em>{subtitle}</em></p>
   <nav
-    class="text-ink-muted flex flex-wrap items-baseline gap-[0.65rem] font-sans text-[0.72rem] font-medium tracking-[0.14em] uppercase"
+    class="text-ink-muted kicker flex flex-wrap items-baseline gap-[0.65rem]"
     aria-label="Primary"
   >
     {
@@ -55,27 +53,28 @@ const navAnchor =
               ·
             </span>
           )}
-          <Link
+          <NavLink
+            variant="subtle"
             href={item.href}
-            class={navAnchor}
             aria-current={
               currentPath.startsWith(item.href) ? "page" : undefined
             }
           >
             {item.label}
-          </Link>
+          </NavLink>
         </>
       ))
     }
     <span class="text-ink-subtle" aria-hidden="true">·</span>
-    <Link
+    <NavLink
+      variant="subtle"
       href={switcherHref}
-      class={`${navAnchor} font-serif text-[0.95rem] font-normal tracking-normal normal-case italic`}
+      class="font-serif text-[0.95rem] font-normal tracking-normal normal-case italic"
       hreflang={target}
       lang={target}
       rel="alternate"
     >
       {langLabel}
-    </Link>
+    </NavLink>
   </nav>
 </header>

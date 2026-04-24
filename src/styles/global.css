@@ -31,10 +31,12 @@
   --text-page-title: clamp(2rem, 5vw, 3rem);
   --text-standing-title: clamp(2rem, 5vw, 2.75rem);
   --text-entry-title: clamp(1.4rem, 3vw, 1.875rem);
+  --text-kicker: 0.72rem;
 
   /* Fluid page padding for the outer wrapper. */
   --spacing-page-y: clamp(2.5rem, 5vw, 4rem);
   --spacing-page-x: clamp(1.25rem, 4vw, 2rem);
+  --spacing-hairline: 0.1rem;
 
   /* Wipe Tailwind's default breakpoints — the site is fluid and uses one
      bespoke layout threshold. Removing defaults makes accidental `md:...`
@@ -87,6 +89,17 @@
     outline-offset: 2px;
     border-radius: 2px;
   }
+}
+
+/* Small-caps-ish nav/meta label — used for masthead/footer nav, listing
+   entry meta, post header dates, and 404 kicker. Pair with color + spacing
+   utilities at the call site. */
+@utility kicker {
+  font-family: var(--font-sans);
+  font-size: var(--text-kicker);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
 /* -----------------------------------------------------------------------------
